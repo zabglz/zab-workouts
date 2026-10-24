@@ -12,14 +12,14 @@
 <title>Zab Workouts</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
 /* Layout: dark training binder. Filter chips, color-coded workout tabs, one sheet per workout; full-screen player with an orbitable 3D mannequin. Accent changes per workout type. */
 :root{
   --bg:#0a0a0a; --sheet:#131313; --sheet2:#1a1a1a; --ink:#f3f3f3; --muted:#a2a2a2; --line:#262626;
   --c-chest:#D24E26; --c-back:#4B6BE2; --c-legs:#ADD893; --c-shoulders:#F1A33A; --c-arms:#F7F56B; --c-circuit:#39FF6A; --c-bw:#FFFFFF;
   --accent:#D24E26; --accent-ink:#ffffff; --bar:#2a2a2a;
-  --display:"Barlow Condensed","Arial Narrow",sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --display:"Anton","Arial Narrow",Impact,sans-serif; --body:"Inter",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
   color-scheme:dark;
 }
 [hidden]{display:none!important}
@@ -169,6 +169,86 @@ canvas#fig:active{cursor:grabbing}
 .ctrl{grid-area:ctrl;display:flex;justify-content:center;gap:10px;max-width:640px;width:100%;margin:0 auto}
 .ctrl button{flex:1;border-radius:12px;padding:16px 8px;font-size:1rem;font-weight:600;border:1px solid var(--line);background:var(--sheet);color:var(--ink)}
 .ctrl .main{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);flex:1.6}
+
+/* ===== Refinement pass: athletic editorial language (dark), per-workout accents kept =====
+   Rules: one display tier (condensed uppercase, line-height .9) for titles only; quiet Inter UI;
+   flat surfaces, no shadows; every action is a pill or a circle; one solid accent pill per screen;
+   8px rhythm; 44px+ touch targets; tap-collapse feedback. */
+:root{--cloud:#1b1b1d;--cloud2:#232326;--hair:#2a2a2d;--mute2:#8e8e92;--r-pill:999px}
+body{font-feature-settings:"ss01","cv11";letter-spacing:-.005em}
+h1{font-size:clamp(2.6rem,12vw,4rem);line-height:.9;letter-spacing:0}
+.sub{font-size:.95rem;color:var(--mute2)}
+.wrap{gap:24px}
+.view{gap:24px}
+/* chips: hairline pill, active fully inverted */
+.chip{min-height:40px;padding:8px 18px;font-weight:500;font-size:.9rem;background:transparent;border-color:var(--hair)}
+.chip[aria-pressed="true"]{background:#fff;color:#111;border-color:#fff}
+/* carousel cards: the art is the card */
+.card{border:0;border-radius:24px}
+.card h3{font-size:clamp(2.6rem,11vw,3.4rem);line-height:.9;margin-top:8px}
+.card .eq{font-size:.88rem;color:#cfcfd2}
+.card:focus-visible,.gcard:focus-visible{outline:2px solid var(--c);outline-offset:3px}
+.card:hover{border:0}
+.tag{border-radius:var(--r-pill);padding:4px 10px;font-family:var(--body);font-weight:600;font-size:.68rem;letter-spacing:.1em}
+.dur{font-family:var(--body);font-weight:600;font-size:.75rem;padding:6px 11px;background:rgba(10,10,10,.65);border:0}
+/* library: flat tiles on soft surface, no borders */
+.libhead h2{font-family:var(--body);font-size:.78rem;letter-spacing:.14em;color:var(--mute2)}
+.libhead span{font-family:var(--body);font-weight:600;font-size:.82rem}
+.grid{gap:8px}
+.gcard{background:var(--cloud);border:0;border-radius:18px;padding:16px;gap:8px;min-height:112px;justify-content:flex-end}
+.gcard b{font-size:1.6rem;line-height:.95;letter-spacing:.005em;overflow-wrap:anywhere}
+.gcard small{font-family:var(--body);font-weight:600;letter-spacing:.1em;font-size:.66rem}
+.gcard span{font-size:.8rem;color:var(--mute2);line-height:1.35}
+/* detail */
+.dtop{padding-block:8px}
+.back{gap:10px;color:var(--ink);font-weight:500;padding:0;min-height:44px}
+.back .ic{width:40px;height:40px;border-radius:50%;background:var(--cloud);display:grid;place-items:center}
+.hero{border:0;border-radius:24px}
+.hero h2{font-size:clamp(3rem,14vw,4.6rem);line-height:.88}
+.stats{gap:8px}
+.stat{background:var(--cloud);border:0;border-radius:18px;padding:14px 6px}
+.stat b{font-family:var(--body);font-weight:600;font-size:1.2rem}
+.stat small{color:var(--mute2);font-weight:500}
+.sheet{background:transparent;border:0;border-top:0;padding:0;gap:0}
+.block{border-top:1px solid var(--hair);padding-block:20px;gap:6px}
+.bh h3{font-size:.72rem;letter-spacing:.12em;color:var(--mute2)}
+.bh h3 b{display:block;margin:6px 0 0;font-family:var(--display);font-weight:400;font-size:1.7rem;line-height:.95;text-transform:uppercase;letter-spacing:.005em}
+.sets{font-family:var(--body);font-weight:600;font-size:.82rem;background:var(--cloud);color:var(--accent);padding:5px 11px;border-radius:var(--r-pill);align-self:flex-start}
+li{border-bottom:1px solid var(--hair);padding:12px 0;min-height:48px}
+li.go:active{background:var(--cloud)}
+.amt{font-family:var(--body);font-weight:500;color:var(--ink)}
+.bar{height:6px;border-radius:3px;opacity:.6}
+.note,.tempo{color:var(--mute2)}
+.start{border-radius:var(--r-pill);font-weight:600}
+.cta .start{min-height:56px;border-radius:var(--r-pill);font-size:1.05rem;letter-spacing:.01em}
+/* player */
+.x{width:44px;height:44px;padding:0;border-radius:50%;background:var(--cloud);border:0;display:grid;place-items:center}
+.x svg{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.elapsed{min-height:44px;padding:0 16px;background:var(--cloud);border:0;font-family:var(--body);font-weight:600;font-size:1rem}
+.prog{height:3px}
+canvas#fig{border:0;border-radius:24px;background:var(--cloud)}
+.fmin{width:40px;height:40px;border-radius:50%;border:0;background:rgba(10,10,10,.7)}
+.views{gap:6px}
+.views button{min-height:36px;padding:6px 14px;font-weight:500;background:transparent;border-color:var(--hair)}
+.views button[aria-pressed="true"]{background:#fff;color:#111;border-color:#fff}
+.ftag{border-radius:var(--r-pill);padding:4px 10px;font-weight:600}
+.psub{letter-spacing:.12em;font-weight:600;font-size:.78rem}
+.pname{line-height:.92;letter-spacing:.005em;font-weight:400}
+.clock{font-family:var(--body);font-weight:700;letter-spacing:-.03em}
+.clock.reps{font-weight:600;letter-spacing:-.02em}
+.next{color:var(--mute2)}
+.pup{border-top:1px solid var(--hair)}
+.pup li{border-bottom:1px solid var(--hair);min-height:0;padding:10px 2px}
+.pup li span{font-family:var(--body);font-weight:500}
+.ctrl{gap:8px}
+.ctrl button{min-height:56px;padding:0 8px;border-radius:var(--r-pill);border:0;background:var(--cloud);font-weight:600}
+.ctrl .main{background:var(--accent);color:var(--accent-ink)}
+@media (orientation:landscape) and (max-height:520px){.ctrl button{min-height:46px}.x,.elapsed{min-height:38px}.x{width:38px;height:38px}}
+/* tap-collapse feedback */
+button{transition:transform .12s ease,opacity .12s ease;-webkit-tap-highlight-color:transparent}
+button:active{transform:scale(.96);opacity:.85}
+.card:active{transform:scale(.985)}
+@media (prefers-reduced-motion:reduce){button{transition:none}button:active,.card:active{transform:none}}
 </style>
 
 </head>
@@ -185,7 +265,7 @@ canvas#fig:active{cursor:grabbing}
   <div class="grid" id="grid"></div>
  </section>
  <section class="view" id="detail" hidden>
-  <div class="dtop"><button class="back" id="dback"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>All workouts</button></div>
+  <div class="dtop"><button class="back" id="dback"><span class="ic"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></span>All workouts</button></div>
   <div class="hero" id="hero"><canvas id="heroCv" aria-hidden="true"></canvas><div class="ov"><span class="tag" id="htag"></span><h2 id="htitle"></h2><div class="eq" id="heq"></div></div></div>
   <div class="stats" id="stats"></div>
   <article class="sheet" id="sheet"></article>
@@ -193,7 +273,7 @@ canvas#fig:active{cursor:grabbing}
  </section>
 </div>
 <div class="player" id="player" hidden>
-  <div class="ptop"><span class="where" id="pwhere"></span><div class="pright"><span class="elapsed" id="pel" title="Total workout time"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2h5"/></svg><b id="pelT">0:00</b></span><button class="x" id="pclose">Exit</button></div></div>
+  <div class="ptop"><span class="where" id="pwhere"></span><div class="pright"><span class="elapsed" id="pel" title="Total workout time"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2h5"/></svg><b id="pelT">0:00</b></span><button class="x" id="pclose" aria-label="Exit workout" title="Exit workout"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
   <div class="prog"><i id="pbar"></i></div>
   <div class="figcol">
     <div class="figwrap"><canvas id="fig" width="600" height="600" aria-label="Animated demo of the current exercise. Drag to rotate."></canvas><span class="ftag" id="ftag" hidden></span><span class="fhint">Drag to rotate</span><button class="fmin" id="fmin" aria-label="Shrink illustration" title="Shrink illustration"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path class="i-shrink" d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/><path class="i-grow" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button></div>
