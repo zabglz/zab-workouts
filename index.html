@@ -249,6 +249,19 @@ button{transition:transform .12s ease,opacity .12s ease;-webkit-tap-highlight-co
 button:active{transform:scale(.96);opacity:.85}
 .card:active{transform:scale(.985)}
 @media (prefers-reduced-motion:reduce){button{transition:none}button:active,.card:active{transform:none}}
+
+/* bug-fix pass */
+.dtop{top:0;padding-top:calc(env(safe-area-inset-top,0px) + 10px);margin-top:calc(-1*(env(safe-area-inset-top,0px) + 10px));padding-bottom:10px;background:var(--bg);box-shadow:inset 0 -1px 0 var(--hair)}
+.hero{width:min(100%,560px,62vh);width:min(100%,560px,62dvh)}
+.hero,.card{container-type:inline-size}
+.hero h2{font-size:clamp(1.8rem,15cqw,4.2rem);overflow-wrap:normal}
+.card h3{font-size:clamp(1.8rem,13cqw,3.4rem)}
+.hero .ov{padding:16px}
+.card h3{overflow-wrap:normal}
+.player.mini .infocol{justify-content:flex-start;padding-top:8px}
+.sheet{padding-bottom:8px}
+@media (orientation:landscape) and (max-height:520px){.cta{position:static;background:none;margin-top:0}.hero{width:min(100%,420px,78vh)}}
+@media (min-width:1000px){.player{padding-left:max(32px,calc((100vw - 1200px)/2));padding-right:max(32px,calc((100vw - 1200px)/2))}}
 </style>
 
 </head>
@@ -818,19 +831,45 @@ function drawScene(ctx,W,H,d,f,cam,accent,mirror,bg){
   const sp=pr([J.P[0],0,J.P[2]]);ctx.fillStyle='rgba(0,0,0,.45)';ctx.beginPath();ctx.ellipse(sp[0],sp[1],sc*.42*sp[3],sc*.42*sp[3]*Math.max(.15,Math.sin(el)),0,0,7);ctx.fill();
   // primitives
   const L=[];const X=mkX(L);
-  const bs=(a,b,w,side)=>L.push({k:'s',a,b,w,side,body:1});
-  bs(J.hipL,J.kneeL,.13,'L');bs(J.kneeL,J.ankL,.095,'L');bs(J.heelL,J.toeL,.06,'L');
-  bs(J.hipR,J.kneeR,.13,'R');bs(J.kneeR,J.ankR,.095,'R');bs(J.heelR,J.toeR,.06,'R');
-  bs(add(J.P,mul(J.up,.07)),add(J.neck,mul(J.up,-.06)),.22,'C');bs(J.shL,J.shR,.1,'C');bs(J.hipL,J.hipR,.15,'C');bs(J.neck,mid(J.neck,J.head),.075,'C');
-  bs(J.shL,J.elL,.085,'L');bs(J.elL,J.handL,.066,'L');bs(J.shR,J.elR,.085,'R');bs(J.elR,J.handR,.066,'R');
-  L.push({k:'b',c:J.head,r:.105,body:1,side:'C'});L.push({k:'b',c:add(J.head,mul(J.face,.075)),r:.032,face:1});
-  L.push({k:'b',c:J.handL,r:.042,body:1,side:'L'});L.push({k:'b',c:J.handR,r:.042,body:1,side:'R'});
+  // anatomical body: tapered, shaded capsules (radii in metres)
+  const tb=(a,b,ra,rb,side)=>L.push({k:'t',a,b,ra,rb,side,body:1}),sb=(c,r,side)=>L.push({k:'b',c,r,body:1,side});
+  for(const S of['L','R']){const hip=J['hip'+S],kn=J['knee'+S],an=J['ank'+S],sh=J['sh'+S],el=J['el'+S],hd=J['hand'+S];
+    tb(hip,kn,.078,.05,S);                                   // thigh
+    const calf=add(kn,mul(sub(an,kn),.32));tb(kn,calf,.05,.056,S);tb(calf,an,.056,.031,S); // calf bulge
+    tb(J['heel'+S],J['toe'+S],.036,.026,S);                 // foot
+    tb(sh,el,.052,.037,S);                                   // upper arm
+    const fm=add(el,mul(sub(hd,el),.3));tb(el,fm,.037,.039,S);tb(fm,hd,.039,.027,S); // forearm
+    sb(hd,.037,S);sb(sh,.058,S)}                            // hand, deltoid
+  const chest=add(J.neck,mul(J.up,-.13)),waist=add(J.P,mul(J.up,.24));
+  tb(J.hipL,J.hipR,.088,.088,'C');                           // pelvis
+  tb(J.P,waist,.105,.09,'C');tb(waist,chest,.09,.122,'C');  // abdomen -> ribcage
+  tb(J.shL,J.shR,.052,.052,'C');                             // shoulder girdle
+  tb(J.neck,add(J.neck,mul(sub(J.head,J.neck),.55)),.042,.04,'C'); // neck
+  sb(J.head,.098,'C');sb(add(add(J.head,mul(J.face,.035)),mul(J.up,-.045)),.07,'C'); // skull + jaw
+  L.push({k:'b',c:add(J.head,mul(J.face,.085)),r:.026,face:1});
   if(d.eq)d.eq(J,d.KF,X,f.i);
-  for(const p of L){p.dp=p.k==='s'?(pr(p.a)[2]+pr(p.b)[2])/2:p.k==='p'?p.pts.reduce((s,q)=>s+pr(q)[2],0)/p.pts.length:pr(p.c)[2]}
+  for(const p of L){p.dp=(p.k==='s'||p.k==='t')?(pr(p.a)[2]+pr(p.b)[2])/2:p.k==='p'?p.pts.reduce((s,q)=>s+pr(q)[2],0)/p.pts.length:pr(p.c)[2]}
   const bd=L.filter(p=>p.body).map(p=>p.dp),dmin=Math.min(...bd),dmax=Math.max(...bd)+1e-6;
   L.sort((a,b)=>((b.u?1:0)-(a.u?1:0))||a.dp-b.dp);
   ctx.lineCap='round';ctx.lineJoin='round';
+  const LT=[-.55,-.83],tone=(p)=>{const t=(p.dp-dmin)/(dmax-dmin);return (.6+.4*t)*(p.side==='L'?.84:1)};
+  
+  const caps=(ax,ay,ra,bx,by,rb)=>{const dx=bx-ax,dy=by-ay,Lh=Math.hypot(dx,dy);ctx.beginPath();
+    if(Lh<=Math.abs(ra-rb)+.5){const r=Math.max(ra,rb),x=ra>rb?ax:bx,y=ra>rb?ay:by;ctx.arc(x,y,r,0,7);return}
+    const th=Math.atan2(dy,dx),ph=Math.acos(Math.max(-1,Math.min(1,(ra-rb)/Lh)));
+    ctx.arc(ax,ay,ra,th+ph,th+2*Math.PI-ph);ctx.arc(bx,by,rb,th-ph,th+ph);ctx.closePath()};
+  const bodyFill=(cx0,cy0,nx,ny,r,k)=>{if(nx*LT[0]+ny*LT[1]<0){nx=-nx;ny=-ny}
+    const g=ctx.createLinearGradient(cx0+nx*r,cy0+ny*r,cx0-nx*r,cy0-ny*r),c=mix(B,A,k);
+    g.addColorStop(0,mix(A,[255,255,255],.32*k));g.addColorStop(.38,c);g.addColorStop(1,mix(A,[0,0,0],.62-.25*k));return g};
   for(const p of L){
+    if(p.k==='t'){const a=pr(p.a),b=pr(p.b),ra=p.ra*sc*a[3],rb=p.rb*sc*b[3],k=tone(p);
+      let nx=-(b[1]-a[1]),ny=b[0]-a[0];const ln=Math.hypot(nx,ny)||1;nx/=ln;ny/=ln;
+      caps(a[0],a[1],ra,b[0],b[1],rb);ctx.fillStyle=bodyFill((a[0]+b[0])/2,(a[1]+b[1])/2,nx,ny,(ra+rb)/2,k);ctx.fill();
+      ctx.strokeStyle=mix(B,[0,0,0],.35);ctx.lineWidth=1.2;ctx.stroke();continue}
+    if(p.k==='b'&&p.body){const q=pr(p.c),r=p.r*sc*q[3],k=tone(p);
+      const g=ctx.createRadialGradient(q[0]+LT[0]*r*.45,q[1]+LT[1]*r*.45,r*.1,q[0],q[1],r);
+      g.addColorStop(0,mix(A,[255,255,255],.3*k));g.addColorStop(.55,mix(B,A,k));g.addColorStop(1,mix(A,[0,0,0],.6-.25*k));
+      ctx.beginPath();ctx.arc(q[0],q[1],r,0,7);ctx.fillStyle=g;ctx.fill();ctx.strokeStyle=mix(B,[0,0,0],.35);ctx.lineWidth=1.2;ctx.stroke();continue}
     if(p.k==='s'){const a=pr(p.a),b=pr(p.b),w=p.w*sc*(a[3]+b[3])/2;
       if(p.body){const t=(p.dp-dmin)/(dmax-dmin),sh=(.58+.42*t)*(p.side==='L'?.86:1);ctx.strokeStyle=mix(B,B,0);ctx.lineWidth=w+3;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();ctx.strokeStyle=mix(B,A,sh)}
       else ctx.strokeStyle=p.c;
