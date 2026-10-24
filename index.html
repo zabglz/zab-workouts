@@ -262,6 +262,21 @@ button:active{transform:scale(.96);opacity:.85}
 .sheet{padding-bottom:8px}
 @media (orientation:landscape) and (max-height:520px){.cta{position:static;background:none;margin-top:0}.hero{width:min(100%,420px,78vh)}}
 @media (min-width:1000px){.player{padding-left:max(32px,calc((100vw - 1200px)/2));padding-right:max(32px,calc((100vw - 1200px)/2))}}
+
+/* muscle chips + landscape spacing */
+.fmus{position:absolute;left:10px;bottom:10px;right:110px;display:flex;flex-wrap:wrap;gap:4px;font-size:.72rem;font-weight:600;color:#ffb38a;pointer-events:none}
+.fmus span{display:inline-flex;align-items:center;gap:5px;background:rgba(10,10,10,.6);padding:3px 8px 3px 6px;border-radius:999px}
+.fmus i{width:7px;height:7px;border-radius:50%;background:#ee4a26;box-shadow:0 0 6px #ff6028}
+.player.mini .fmus{display:none}
+@media (orientation:landscape) and (min-aspect-ratio:5/4){
+  .figcol{padding-top:10px;justify-content:flex-start}
+  .figwrap{width:min(50vw,calc(100vh - 230px));width:min(50vw,calc(100dvh - 230px))}
+  .player.mini .figwrap{width:min(26vw,calc(100vh - 230px));width:min(26vw,calc(100dvh - 230px))}}
+@media (orientation:landscape) and (max-height:520px){
+  .figcol{padding-top:8px;gap:6px}
+  .figwrap{width:min(50vw,calc(100vh - 175px));width:min(50vw,calc(100dvh - 175px))}
+  .player.mini .figwrap{width:min(26vw,calc(100vh - 175px));width:min(26vw,calc(100dvh - 175px))}
+  .views button{min-height:30px;padding:3px 10px}}
 </style>
 
 </head>
@@ -289,7 +304,7 @@ button:active{transform:scale(.96);opacity:.85}
   <div class="ptop"><span class="where" id="pwhere"></span><div class="pright"><span class="elapsed" id="pel" title="Total workout time"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2h5"/></svg><b id="pelT">0:00</b></span><button class="x" id="pclose" aria-label="Exit workout" title="Exit workout"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
   <div class="prog"><i id="pbar"></i></div>
   <div class="figcol">
-    <div class="figwrap"><canvas id="fig" width="600" height="600" aria-label="Animated demo of the current exercise. Drag to rotate."></canvas><span class="ftag" id="ftag" hidden></span><span class="fhint">Drag to rotate</span><button class="fmin" id="fmin" aria-label="Shrink illustration" title="Shrink illustration"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path class="i-shrink" d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/><path class="i-grow" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button></div>
+    <div class="figwrap"><canvas id="fig" width="600" height="600" aria-label="Animated demo of the current exercise. Drag to rotate."></canvas><span class="ftag" id="ftag" hidden></span><span class="fhint">Drag to rotate</span><span class="fmus" id="fmus" hidden></span><button class="fmin" id="fmin" aria-label="Shrink illustration" title="Shrink illustration"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path class="i-shrink" d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/><path class="i-grow" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button></div>
     <div class="views" id="views"><button data-v="0">Front</button><button data-v="45">¾</button><button data-v="90">Side</button><button data-v="180">Back</button><button data-v="top">Top</button><button data-v="spin">Spin</button></div>
   </div>
   <div class="infocol">
@@ -810,6 +825,25 @@ const MAP=[
 [/arm circles/,'armcircle'],[/wrist/,'wrist'],[/around the world/,'around'],[/child's pose|kneeling bicep/,'child'],[/downward dog pedal/,'dog'],[/downward dog/,'dogstill'],
 [/cobra/,'cobra'],[/hip flexor/,'hipflex'],[/lying hamstring/,'lyingham'],[/seated glute/,'seatedglute'],[/glute stretch/,'glutestretch'],[/seated hamstring/,'seatedham'],
 [/butterfly/,'butterfly'],[/breathing|cool-down/,'breathe']];
+const MUS={bench:'chest tri delt',pushTempo:'chest tri delt',incline:'chest delt tri',cablefly:'chest delt',dips:'chest tri',
+pullup:'lats bi fore',pullupW:'lats bi fore',invrow:'lats bi traps',deadlift:'ham glute back fore traps',dbrow:'lats bi traps',bbshrug:'traps fore',dbshrug:'traps fore',
+squat:'quad glute',backsquat:'quad glute back',bblunge:'quad glute ham',hipthrust:'glute ham',legext:'quad',sidelunge:'quad glute',sidelungeBW:'quad glute',calf:'calf',
+military:'delt tri traps',pushpress:'delt tri quad',platefront:'delt',arnold:'delt tri',lateral:'delt',upright:'delt traps',rearfly:'delt traps',platecrunch:'abs',
+inclinecurl:'bi fore',inclinehammer:'bi fore',ezcurl:'bi fore',skull:'tri',dbskull:'tri',pushdown:'tri',curl:'bi fore',hammer:'bi fore',
+thruster:'quad glute delt tri',frontsquat:'quad glute abs',squatpress:'quad glute delt tri',squatpunch:'quad glute delt',dbdlcurl:'ham glute bi',curtsyraise:'quad glute delt',
+curtsyKB:'quad glute',curtsyhammer:'quad glute bi',mtn:'abs quad delt',sumosquat:'quad glute',bridge:'glute ham',bridgewalk:'glute ham',widenarrow:'quad glute',
+stepjack:'quad calf delt',jack:'quad calf delt',crossjack:'chest delt calf',predator:'quad glute',plankjack:'abs delt',sprinter:'quad glute ham',dbswing:'glute ham back',
+kbswing:'glute ham back',spdip:'obl abs',sprot:'obl abs delt',pyramid:'abs delt',situp:'abs',vsit:'abs',jackknife:'abs',heeltaps:'obl abs',bicycle:'abs obl',
+bicyclepress:'abs obl delt',fig4:'abs',superman:'back glute',plankSuper:'abs back glute',walkout:'ham abs delt',walkjump:'ham abs quad',kbrdl:'ham glute back',
+slrdl:'ham glute',windmill:'obl delt',halo:'delt abs',rcp:'lats bi delt',plankdrag:'abs delt lats',gobletcurl:'quad glute bi',dsl:'ham glute delt quad',
+pushuptap:'chest tri abs',planktap:'abs delt',knpush:'chest tri',pushup:'chest tri delt',dbpushup:'chest tri delt',bearcrawl:'abs delt quad',beartap:'abs delt',
+skater:'quad glute',skatertap:'quad glute',gorilla:'quad glute',gorillasumo:'quad glute',gorillacurl:'quad glute bi',burpee:'quad chest delt',halfburpee:'chest tri abs',
+pushcatch:'chest tri quad',pushtoe:'chest tri abs',rowstep:'lats bi',rotrowstep:'lats bi obl',bentrow:'lats bi traps',pivot:'delt obl',lungedb:'quad glute',
+lungehammer:'quad glute bi',lungecurl:'quad glute bi',lungeknee:'quad glute',lungerot:'quad glute obl',lungebw:'quad glute',sjcp:'quad glute bi delt',squatdb:'quad glute',
+goblet:'quad glute',hostages:'quad glute',pulse:'quad glute',stepsquat:'quad glute',squatjump:'quad glute calf',latjump:'quad glute',clean:'glute ham traps',snatch:'glute ham delt',
+run:'quad calf',highknee:'quad calf',buttkick:'ham calf',skip:'quad calf',kneetwist:'abs obl'};
+const MUN={chest:'Chest',tri:'Triceps',delt:'Shoulders',lats:'Lats',bi:'Biceps',fore:'Forearms',traps:'Traps',ham:'Hamstrings',glute:'Glutes',back:'Lower back',quad:'Quads',calf:'Calves',abs:'Abs',obl:'Obliques'};
+for(const k in MUS)if(DF[k])DF[k].mu=MUS[k];
 function defFor(name){const n=name.toLowerCase();for(const[re,k]of MAP)if(re.test(n))return{key:k,d:compile(DF[k]),mirror:!!DF[k].mir&&/\(l\)|\(left\)/.test(n)};return{key:'stand',d:compile(DF.stand),mirror:false}}
 
 /* ---------- renderer ---------- */
@@ -831,45 +865,64 @@ function drawScene(ctx,W,H,d,f,cam,accent,mirror,bg){
   const sp=pr([J.P[0],0,J.P[2]]);ctx.fillStyle='rgba(0,0,0,.45)';ctx.beginPath();ctx.ellipse(sp[0],sp[1],sc*.42*sp[3],sc*.42*sp[3]*Math.max(.15,Math.sin(el)),0,0,7);ctx.fill();
   // primitives
   const L=[];const X=mkX(L);
-  // anatomical body: tapered, shaded capsules (radii in metres)
-  const tb=(a,b,ra,rb,side)=>L.push({k:'t',a,b,ra,rb,side,body:1}),sb=(c,r,side)=>L.push({k:'b',c,r,body:1,side});
+  // anatomical body: tapered, shaded capsules + muscle bellies (radii in metres); mu = muscle group tag
+  const tb=(a,b,ra,rb,side,mu)=>L.push({k:'t',a,b,ra,rb,side,mu,body:1}),sb=(c,r,side,mu,ov)=>L.push({k:'b',c,r,body:1,side,mu,ov});
+  const perp=(v,d)=>sub(v,mul(d,dot(v,d)));
   for(const S of['L','R']){const hip=J['hip'+S],kn=J['knee'+S],an=J['ank'+S],sh=J['sh'+S],el=J['el'+S],hd=J['hand'+S];
-    tb(hip,kn,.078,.05,S);                                   // thigh
-    const calf=add(kn,mul(sub(an,kn),.32));tb(kn,calf,.05,.056,S);tb(calf,an,.056,.031,S); // calf bulge
-    tb(J['heel'+S],J['toe'+S],.036,.026,S);                 // foot
-    tb(sh,el,.052,.037,S);                                   // upper arm
-    const fm=add(el,mul(sub(hd,el),.3));tb(el,fm,.037,.039,S);tb(fm,hd,.039,.027,S); // forearm
-    sb(hd,.037,S);sb(sh,.058,S)}                            // hand, deltoid
+    const td=nrm(sub(kn,hip));let qf=perp(mul(sub(an,kn),-1),td);qf=vlen(qf)<.05?cr(td,J.hr):nrm(qf);
+    const tm=add(hip,mul(sub(kn,hip),.45));
+    tb(hip,kn,.078,.05,S,'thigh');
+    const calf=add(kn,mul(sub(an,kn),.32));tb(kn,calf,.05,.056,S,'calf');tb(calf,an,.056,.031,S,'calf');
+    tb(J['heel'+S],J['toe'+S],.036,.026,S);
+    const ad=nrm(sub(el,sh));let bf=perp(sub(hd,el),ad);bf=vlen(bf)<.06?cr(ad,J.rt):nrm(bf);
+    const am=add(sh,mul(sub(el,sh),.5));
+    tb(sh,el,.052,.037,S,'arm');
+    const fm=add(el,mul(sub(hd,el),.3));tb(el,fm,.037,.039,S,'fore');tb(fm,hd,.039,.027,S,'fore');
+    sb(hd,.037,S);sb(sh,.06,S,'delt')}
   const chest=add(J.neck,mul(J.up,-.13)),waist=add(J.P,mul(J.up,.24));
-  tb(J.hipL,J.hipR,.088,.088,'C');                           // pelvis
-  tb(J.P,waist,.105,.09,'C');tb(waist,chest,.09,.122,'C');  // abdomen -> ribcage
-  tb(J.shL,J.shR,.052,.052,'C');                             // shoulder girdle
-  tb(J.neck,add(J.neck,mul(sub(J.head,J.neck),.55)),.042,.04,'C'); // neck
-  sb(J.head,.098,'C');sb(add(add(J.head,mul(J.face,.035)),mul(J.up,-.045)),.07,'C'); // skull + jaw
-  L.push({k:'b',c:add(J.head,mul(J.face,.085)),r:.026,face:1});
+  tb(J.hipL,J.hipR,.088,.088,'C');
+  tb(J.P,waist,.105,.09,'C');tb(waist,chest,.09,.122,'C');
+  tb(J.shL,J.shR,.052,.052,'C');
+  tb(J.neck,add(J.neck,mul(sub(J.head,J.neck),.55)),.042,.04,'C');
+  for(const s0 of[-1,1]){const sd=s0<0?'L':'R';
+    sb(add(add(add(chest,mul(J.fw,.07)),mul(J.rt,s0*.065)),mul(J.up,-.01)),.068,sd,'chest',1);   // pecs
+    sb(add(add(add(chest,mul(J.fw,-.07)),mul(J.rt,s0*.075)),mul(J.up,-.05)),.072,sd,'lats',1);   // lats
+    sb(add(add(J.neck,mul(J.rt,s0*.085)),mul(J.fw,-.03)),.05,sd,'traps',1);                       // traps
+    sb(add(add(add(J.P,mul(J.fw,-.065)),mul(J.hr,s0*.065)),mul(J.up,-.02)),.075,sd,'glute',1);   // glutes
+    sb(add(add(waist,mul(J.rt,s0*.07)),mul(J.fw,.02)),.052,sd,'obl',1)}                           // obliques
+  sb(add(waist,mul(J.fw,.06)),.06,'C','abs',1);sb(add(add(waist,mul(J.up,.1)),mul(J.fw,.07)),.058,'C','abs',1);
+  sb(add(waist,mul(J.fw,-.06)),.058,'C','back',1);
+  sb(J.head,.098,'C');sb(add(add(J.head,mul(J.face,.035)),mul(J.up,-.045)),.07,'C');
+  {const MU0=d.muS||(d.muS=new Set((d.mu||'').split(' ').filter(Boolean)));for(let i=L.length-1;i>=0;i--)if(L[i].ov&&!MU0.has(L[i].mu))L.splice(i,1)}
   if(d.eq)d.eq(J,d.KF,X,f.i);
   for(const p of L){p.dp=(p.k==='s'||p.k==='t')?(pr(p.a)[2]+pr(p.b)[2])/2:p.k==='p'?p.pts.reduce((s,q)=>s+pr(q)[2],0)/p.pts.length:pr(p.c)[2]}
   const bd=L.filter(p=>p.body).map(p=>p.dp),dmin=Math.min(...bd),dmax=Math.max(...bd)+1e-6;
   L.sort((a,b)=>((b.u?1:0)-(a.u?1:0))||a.dp-b.dp);
   ctx.lineCap='round';ctx.lineJoin='round';
-  const LT=[-.55,-.83],tone=(p)=>{const t=(p.dp-dmin)/(dmax-dmin);return (.6+.4*t)*(p.side==='L'?.84:1)};
-  
+  const LT=[-.55,-.83],tone=(p)=>{const t=(p.dp-dmin)/(dmax-dmin);return (.62+.38*t)*(p.side==='L'?.86:1)};
+  const MU=d.muS||(d.muS=new Set((d.mu||'').split(' ').filter(Boolean)));
+  const hot=p=>p.mu&&(MU.has(p.mu)||(p.mu==='thigh'&&(MU.has('quad')||MU.has('ham')))||(p.mu==='arm'&&(MU.has('bi')||MU.has('tri'))));
+  const NB=[196,200,208],NL=[246,247,250],ND=[46,48,56],MB=[238,74,38],ML=[255,168,96],MD=[110,22,10];
+  const pal=(p,k)=>hot(p)?[mix(MB,ML,.55*k),mix(MD,MB,.35+.55*k),mix([0,0,0],MD,.7)]:[mix(NB,NL,.7*k),mix(ND,NB,.25+.7*k),mix([0,0,0],ND,.8)];
+  const rim=mix(B,A,.75);
   const caps=(ax,ay,ra,bx,by,rb)=>{const dx=bx-ax,dy=by-ay,Lh=Math.hypot(dx,dy);ctx.beginPath();
     if(Lh<=Math.abs(ra-rb)+.5){const r=Math.max(ra,rb),x=ra>rb?ax:bx,y=ra>rb?ay:by;ctx.arc(x,y,r,0,7);return}
     const th=Math.atan2(dy,dx),ph=Math.acos(Math.max(-1,Math.min(1,(ra-rb)/Lh)));
     ctx.arc(ax,ay,ra,th+ph,th+2*Math.PI-ph);ctx.arc(bx,by,rb,th-ph,th+ph);ctx.closePath()};
-  const bodyFill=(cx0,cy0,nx,ny,r,k)=>{if(nx*LT[0]+ny*LT[1]<0){nx=-nx;ny=-ny}
-    const g=ctx.createLinearGradient(cx0+nx*r,cy0+ny*r,cx0-nx*r,cy0-ny*r),c=mix(B,A,k);
-    g.addColorStop(0,mix(A,[255,255,255],.32*k));g.addColorStop(.38,c);g.addColorStop(1,mix(A,[0,0,0],.62-.25*k));return g};
+  const glowOn=p=>{if(hot(p)){ctx.shadowColor='rgba(255,96,40,.55)';ctx.shadowBlur=Math.max(4,sc*.05)}},glowOff=()=>{ctx.shadowBlur=0;ctx.shadowColor='transparent'};
   for(const p of L){
-    if(p.k==='t'){const a=pr(p.a),b=pr(p.b),ra=p.ra*sc*a[3],rb=p.rb*sc*b[3],k=tone(p);
-      let nx=-(b[1]-a[1]),ny=b[0]-a[0];const ln=Math.hypot(nx,ny)||1;nx/=ln;ny/=ln;
-      caps(a[0],a[1],ra,b[0],b[1],rb);ctx.fillStyle=bodyFill((a[0]+b[0])/2,(a[1]+b[1])/2,nx,ny,(ra+rb)/2,k);ctx.fill();
-      ctx.strokeStyle=mix(B,[0,0,0],.35);ctx.lineWidth=1.2;ctx.stroke();continue}
-    if(p.k==='b'&&p.body){const q=pr(p.c),r=p.r*sc*q[3],k=tone(p);
-      const g=ctx.createRadialGradient(q[0]+LT[0]*r*.45,q[1]+LT[1]*r*.45,r*.1,q[0],q[1],r);
-      g.addColorStop(0,mix(A,[255,255,255],.3*k));g.addColorStop(.55,mix(B,A,k));g.addColorStop(1,mix(A,[0,0,0],.6-.25*k));
-      ctx.beginPath();ctx.arc(q[0],q[1],r,0,7);ctx.fillStyle=g;ctx.fill();ctx.strokeStyle=mix(B,[0,0,0],.35);ctx.lineWidth=1.2;ctx.stroke();continue}
+    if(p.k==='t'){const a=pr(p.a),b=pr(p.b),ra=p.ra*sc*a[3],rb=p.rb*sc*b[3],k=tone(p),[cl,cm,cd]=pal(p,k);
+      let nx=-(b[1]-a[1]),ny=b[0]-a[0];const ln=Math.hypot(nx,ny)||1;nx/=ln;ny/=ln;if(nx*LT[0]+ny*LT[1]<0){nx=-nx;ny=-ny}
+      const r=(ra+rb)/2,mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,g=ctx.createLinearGradient(mx+nx*r,my+ny*r,mx-nx*r,my-ny*r);
+      g.addColorStop(0,cl);g.addColorStop(.45,cm);g.addColorStop(1,cd);
+      caps(a[0],a[1],ra,b[0],b[1],rb);glowOn(p);ctx.fillStyle=g;ctx.fill();glowOff();
+      ctx.strokeStyle=rim;ctx.globalAlpha=.55;ctx.lineWidth=1.1;ctx.stroke();ctx.globalAlpha=1;continue}
+    if(p.k==='b'&&p.body){const q=pr(p.c),r=p.r*sc*q[3],k=tone(p),[cl,cm,cd]=pal(p,k);
+      const g=ctx.createRadialGradient(q[0]+LT[0]*r*.45,q[1]+LT[1]*r*.45,r*.08,q[0],q[1],r);
+      if(p.ov){g.addColorStop(0,mix(MB,ML,.35*k));g.addColorStop(.7,mix(MD,MB,.55+.4*k));g.addColorStop(1,mix(MD,MB,.35))}
+      else{g.addColorStop(0,cl);g.addColorStop(.6,cm);g.addColorStop(1,cd)}
+      ctx.beginPath();ctx.arc(q[0],q[1],r,0,7);glowOn(p);ctx.fillStyle=g;ctx.fill();glowOff();
+      if(!p.ov){ctx.strokeStyle=rim;ctx.globalAlpha=.55;ctx.lineWidth=1.1;ctx.stroke();ctx.globalAlpha=1}continue}
     if(p.k==='s'){const a=pr(p.a),b=pr(p.b),w=p.w*sc*(a[3]+b[3])/2;
       if(p.body){const t=(p.dp-dmin)/(dmax-dmin),sh=(.58+.42*t)*(p.side==='L'?.86:1);ctx.strokeStyle=mix(B,B,0);ctx.lineWidth=w+3;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();ctx.strokeStyle=mix(B,A,sh)}
       else ctx.strokeStyle=p.c;
@@ -888,7 +941,7 @@ function drawScene(ctx,W,H,d,f,cam,accent,mirror,bg){
 const cv=document.getElementById("fig"),cx=cv.getContext("2d");
 let FIG=defFor("stand"),figPaused=false,animT=0,lastTs=0,cam={yaw:30,el:12},spin=false,drag=null;
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
-function setFig(name,tag){FIG=defFor(name);animT=0;cam.yaw=FIG.d.v??30;cam.el=12;const t=document.getElementById("ftag");t.hidden=!tag;t.textContent=tag||"";syncView()}
+function setFig(name,tag){FIG=defFor(name);{const m=document.getElementById("fmus"),mu=(FIG.d.mu||"").split(" ").filter(Boolean);m.hidden=!mu.length;m.innerHTML=mu.map(x=>`<span><i></i>${MUN[x]}</span>`).join("")}animT=0;cam.yaw=FIG.d.v??30;cam.el=12;const t=document.getElementById("ftag");t.hidden=!tag;t.textContent=tag||"";syncView()}
 function fitCanvas(){const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1),w=Math.max(200,Math.round(r.width*dpr));if(cv.width!==w){cv.width=w;cv.height=w}}
 function drawFig(ts){
   if(!player.hidden){const dt=lastTs?Math.min(.1,(ts-lastTs)/1000):0;lastTs=ts;if(!figPaused&&!reduce)animT+=dt;if(spin&&!drag)cam.yaw+=dt*30;
