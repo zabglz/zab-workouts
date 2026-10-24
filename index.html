@@ -880,19 +880,11 @@ function drawScene(ctx,W,H,d,f,cam,accent,mirror,bg){
     const fm=add(el,mul(sub(hd,el),.3));tb(el,fm,.037,.039,S,'fore');tb(fm,hd,.039,.027,S,'fore');
     sb(hd,.037,S);sb(sh,.06,S,'delt')}
   const chest=add(J.neck,mul(J.up,-.13)),waist=add(J.P,mul(J.up,.24));
-  tb(J.hipL,J.hipR,.088,.088,'C');
-  tb(J.P,waist,.105,.09,'C');tb(waist,chest,.09,.122,'C');
-  tb(J.shL,J.shR,.052,.052,'C');
+  tb(J.hipL,J.hipR,.088,.088,'C','glute');
+  tb(J.P,waist,.105,.09,'C','core');tb(waist,chest,.09,.122,'C','torso');
+  tb(J.shL,J.shR,.052,.052,'C','traps');
   tb(J.neck,add(J.neck,mul(sub(J.head,J.neck),.55)),.042,.04,'C');
-  for(const s0 of[-1,1]){const sd=s0<0?'L':'R';
-    sb(add(add(add(chest,mul(J.fw,.07)),mul(J.rt,s0*.065)),mul(J.up,-.01)),.068,sd,'chest',1);   // pecs
-    sb(add(add(add(chest,mul(J.fw,-.07)),mul(J.rt,s0*.075)),mul(J.up,-.05)),.072,sd,'lats',1);   // lats
-    sb(add(add(J.neck,mul(J.rt,s0*.085)),mul(J.fw,-.03)),.05,sd,'traps',1);                       // traps
-    sb(add(add(add(J.P,mul(J.fw,-.065)),mul(J.hr,s0*.065)),mul(J.up,-.02)),.075,sd,'glute',1);   // glutes
-    sb(add(add(waist,mul(J.rt,s0*.07)),mul(J.fw,.02)),.052,sd,'obl',1)}                           // obliques
-  sb(add(waist,mul(J.fw,.06)),.06,'C','abs',1);sb(add(add(waist,mul(J.up,.1)),mul(J.fw,.07)),.058,'C','abs',1);
-  sb(add(waist,mul(J.fw,-.06)),.058,'C','back',1);
-  sb(J.head,.098,'C');sb(add(add(J.head,mul(J.face,.035)),mul(J.up,-.045)),.07,'C');
+  sb(J.head,.1,'C');
   {const MU0=d.muS||(d.muS=new Set((d.mu||'').split(' ').filter(Boolean)));for(let i=L.length-1;i>=0;i--)if(L[i].ov&&!MU0.has(L[i].mu))L.splice(i,1)}
   if(d.eq)d.eq(J,d.KF,X,f.i);
   for(const p of L){p.dp=(p.k==='s'||p.k==='t')?(pr(p.a)[2]+pr(p.b)[2])/2:p.k==='p'?p.pts.reduce((s,q)=>s+pr(q)[2],0)/p.pts.length:pr(p.c)[2]}
@@ -901,7 +893,8 @@ function drawScene(ctx,W,H,d,f,cam,accent,mirror,bg){
   ctx.lineCap='round';ctx.lineJoin='round';
   const LT=[-.55,-.83],tone=(p)=>{const t=(p.dp-dmin)/(dmax-dmin);return (.62+.38*t)*(p.side==='L'?.86:1)};
   const MU=d.muS||(d.muS=new Set((d.mu||'').split(' ').filter(Boolean)));
-  const hot=p=>p.mu&&(MU.has(p.mu)||(p.mu==='thigh'&&(MU.has('quad')||MU.has('ham')))||(p.mu==='arm'&&(MU.has('bi')||MU.has('tri'))));
+  const GRP={thigh:['quad','ham'],arm:['bi','tri'],torso:['chest','lats'],core:['abs','obl','back'],glute:['glute'],traps:['traps']};
+  const hot=p=>p.mu&&(MU.has(p.mu)||(GRP[p.mu]||[]).some(x=>MU.has(x)));
   const NB=[196,200,208],NL=[246,247,250],ND=[46,48,56],MB=[238,74,38],ML=[255,168,96],MD=[110,22,10];
   const pal=(p,k)=>hot(p)?[mix(MB,ML,.55*k),mix(MD,MB,.35+.55*k),mix([0,0,0],MD,.7)]:[mix(NB,NL,.7*k),mix(ND,NB,.25+.7*k),mix([0,0,0],ND,.8)];
   const rim=mix(B,A,.75);
