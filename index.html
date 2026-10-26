@@ -285,7 +285,7 @@ button:active{transform:scale(.96);opacity:.85}
  <section class="view" id="home">
   <header>
     <h1>Zab <span>Workouts</span></h1>
-    <p class="sub">13 workouts. Tap one to see the plan.</p>
+    <p class="sub">14 workouts. Tap one to see the plan.</p>
   </header>
   <div class="chips" id="chips"></div>
   <div class="car" id="car" aria-label="Workouts"></div>
@@ -413,13 +413,19 @@ const W=[
  {t:"Warm-up",n:"Bring the heat",i:[["Hip openers (L)","0:30"],["Hip openers (R)","0:30"],["Frog squats","0:30"],["Squat to hamstring stretch","0:30"],["Arm circles","0:30"],["World's greatest stretch (L)","0:30"],["World's greatest stretch (R)","0:30"],["Jumping jacks","0:30"]]},
  {t:"Round 1",n:"Fire up",s:"×2",i:[["Squat pulse","0:40"],["Supermans","0:40"],["Glute bridge walk","0:40"],["Push-up","0:40"],["Step-out squat","0:40"]],note:"Rest 0:20 between, 0:30 after round"},
  {t:"Round 2",n:"Feel the heat",s:"×2",i:[["Squat jump","0:40"],["Plank superman","0:40"],["Alt. power skip","0:40"],["Push-up + toe tap","0:40"],["Predator jacks","0:40"]],note:"Rest 0:20 between"},
- {t:"Cool-down",n:"Wind down",i:[["Guided cool-down","5:42"]]}]}
+ {t:"Cool-down",n:"Wind down",i:[["Guided cool-down","5:42"]]}]},
+{id:"disc",g:"bw",name:"Bodyweight Discipline",meta:["Custom","35–50 min","Bodyweight","5–6 days/week"],total:"35–50 min",blocks:[
+ {t:"Warm-up",n:"Warm-up checklist",s:"×2",i:[["Jumping jacks","20 reps"],["Arm circles (fwd/back)","10 reps"],["Shoulder rolls","10 reps"],["Leg swings","10 each leg"],["Bodyweight squats","10 reps"],["Push-ups","10 reps"],["High knees","0:30"],["Mountain climbers","0:30"]],note:"Repeat twice, no rest"},
+ {t:"Core circuit",n:"Full-body grind",s:"×3",i:[["Push-ups","20–30 reps"],["Air squats","30–40 reps"],["Pull-ups (or inverted rows)","5–10 reps"],["Lunges","10–15 each leg"],["Sit-ups or crunches","20–25 reps"],["Plank","1:00"],["Burpees","10–15 reps"]],note:"3–5 rounds. Rest 1:00 after each round, adjust as needed"},
+ {t:"Cool-down",n:"Wind down",i:[["Hamstring stretch (L)","0:30"],["Hamstring stretch (R)","0:30"],["Quad stretch (L)","0:30"],["Quad stretch (R)","0:30"],["Shoulder & triceps stretch","0:30"],["Slow breathing","1:00"]]},
+ {t:"Optional",n:"Endurance · 2–3×/week",opt:1,i:[["Run","1.5–3 mi"],["Sprints, walk-back recovery","10 × 100 m"],["Ruck (15–30 lb pack)","3 mi"],["Swim","500–1000 m"]],note:"Choose one. Not included in the guided timer"},
+ {t:"Weekly plan",n:"Focus tracker",opt:1,i:[["Monday","Strength + Run"],["Tuesday","Core + Sprints"],["Wednesday","Strength + Mobility"],["Thursday","Ruck or Cardio"],["Friday","Full-circuit challenge"],["Saturday","Optional Swim/Run"],["Sunday","Rest / Stretch"]],note:"Rest Sunday or every 3rd day"}]}
 ];
-const GROUPS=[["all","All 13"],["gym","Gym strength"],["db","Dumbbell / kettlebell"],["bw","No equipment"]];
+const GROUPS=[["all",`All ${W.length}`],["gym","Gym strength"],["db","Dumbbell / kettlebell"],["bw","No equipment"]];
 const GL={gym:"Gym",db:"Circuit",bw:"Bodyweight"};
 const ACC={chest:["--c-chest","#fff"],back:["--c-back","#fff"],legs:["--c-legs","#0a0a0a"],shoulders:["--c-shoulders","#0a0a0a"],arms:["--c-arms","#0a0a0a"],db:["--c-circuit","#0a0a0a"],bw:["--c-bw","#0a0a0a"]};
 const accOf=w=>ACC[w.g==="gym"?w.id:w.g];
-const SIG={chest:"Barbell flat bench press",back:"Weighted pull-ups",legs:"Barbell back squat",shoulders:"Barbell military press",arms:"EZ-bar standing curls",hiit:"DB thrusters",kb:"KB swings",dbc:"DB tempo squat + overhead press + punches",climb:"DB squat jump + curl + press",build:"DB clean",push:"Walkouts + low-impact jump",upper:"Alternating snatch",fire:"Squat jump"};
+const SIG={chest:"Barbell flat bench press",back:"Weighted pull-ups",legs:"Barbell back squat",shoulders:"Barbell military press",arms:"EZ-bar standing curls",hiit:"DB thrusters",kb:"KB swings",dbc:"DB tempo squat + overhead press + punches",climb:"DB squat jump + curl + press",build:"DB clean",push:"Walkouts + low-impact jump",upper:"Alternating snatch",fire:"Squat jump",disc:"Burpees"};
 let group="all", cur=W[0].id, homeY=0;
 try{const s=JSON.parse(localStorage.getItem("centr")||"{}");if(s.g)group=s.g}catch(e){}
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -461,7 +467,7 @@ function renderDetail(w){
   let html="",bi=0;
   for(const b of w.blocks){const blockIdx=bi++;
     html+=`<section class="block"><div class="bh"><h3>${esc(b.t)}<b>${esc(b.n)}</b></h3>${b.s?`<span class="sets">${b.s}</span>`:""}</div><ul>`;
-    for(const [n,a] of b.i){const rest=n.startsWith("Rest"),sx=rest?0:secs(a),bar=sx?`<span class="bar" style="width:${Math.min(sx,60)}px"></span>`:"";
+    for(const [n,a] of b.i){const rest=n.startsWith("Rest")||b.opt,sx=rest?0:secs(a),bar=sx?`<span class="bar" style="width:${Math.min(sx,60)}px"></span>`:"";
       html+=`<li${rest?"":` class="go" data-b="${blockIdx}" data-n="${esc(n)}" title="Start from here"`}><span${rest?' class="note"':""}>${esc(n)}</span><span class="amt">${bar}${esc(a)}</span></li>`}
     html+=`</ul>${b.note?`<div class="note">${esc(b.note)}</div>`:""}</section>`}
   if(w.tempo)html+=`<div class="tempo">Tempo 5-0-1-0: seconds lowering, pause at the bottom, seconds lifting, pause at the top. Tap any move to start from there.</div>`;
@@ -794,11 +800,12 @@ seatedglute:{v:40,mir:1,base:{l:[92,90,6],r:[100,-40,10,-40]},k:[{tp:5,a:[50,80,
 seatedham:{v:80,k:[{tp:-5,g:[90,90,6],a:[100,100,8]},{tp:45,hp:20,g:[90,90,6],a:[112,112,8]}],d:1.5},
 butterfly:{v:20,base:{tp:10,a:[38,60,-6,-10]},k:[{g:[80,60,55,-75]},{g:[80,60,46,-75]}],d:1},
 breathe:{v:25,base:{tp:-2,g:[88,90,52,-78],a:[30,70,30,-10]},k:[{se:0},{se:.025,tp:-4}],d:2},
+plankhold:{v:75,an:'hands',k:[PLK,{...PLK,se:.01}],d:1.5},
 stand:{v:30,k:[{a:[0,0,8]},{a:[0,0,9],se:.01}],d:1.5}
 };
 const MAP=[
 [/^rest/,'stand'],[/side plank dips/,'spdip'],[/side plank \+ rotation/,'sprot'],
-[/flat bench press/,'bench'],[/push-up \(tempo/,'pushTempo'],[/incline press/,'incline'],[/cable flys/,'cablefly'],[/^dips/,'dips'],
+[/flat bench press/,'bench'],[/^plank$/,'plankhold'],[/^lunges/,'lungebw'],[/sit-ups or crunches/,'situp'],[/leg swings/,'skier'],[/shoulder rolls/,'armcircle'],[/hamstring stretch/,'lyingham'],[/shoulder & triceps/,'chestopen'],[/push-up \(tempo/,'pushTempo'],[/incline press/,'incline'],[/cable flys/,'cablefly'],[/^dips/,'dips'],
 [/weighted pull-up/,'pullupW'],[/pull-up/,'pullup'],[/inverted row/,'invrow'],[/wide-grip deadlift/,'deadlift'],[/single-arm row/,'dbrow'],
 [/barbell shrugs/,'bbshrug'],[/db shrugs/,'dbshrug'],[/back squat/,'backsquat'],[/barbell alt\. reverse lunge/,'bblunge'],[/hip thrust/,'hipthrust'],
 [/leg extension/,'legext'],[/db side lunge|db lateral lunge|dumbbell lateral lunge/,'sidelunge'],[/lateral lunge/,'sidelungeBW'],[/calf raise/,'calf'],
@@ -844,7 +851,7 @@ skater:'quad glute',skatertap:'quad glute',gorilla:'quad glute',gorillasumo:'qua
 pushcatch:'chest tri quad',pushtoe:'chest tri abs',rowstep:'lats bi',rotrowstep:'lats bi obl',bentrow:'lats bi traps',pivot:'delt obl',lungedb:'quad glute',
 lungehammer:'quad glute bi',lungecurl:'quad glute bi',lungeknee:'quad glute',lungerot:'quad glute obl',lungebw:'quad glute',sjcp:'quad glute bi delt',squatdb:'quad glute',
 goblet:'quad glute',hostages:'quad glute',pulse:'quad glute',stepsquat:'quad glute',squatjump:'quad glute calf',latjump:'quad glute',clean:'glute ham traps',snatch:'glute ham delt',
-run:'quad calf',highknee:'quad calf',buttkick:'ham calf',skip:'quad calf',kneetwist:'abs obl'};
+run:'quad calf',plankhold:'abs delt',highknee:'quad calf',buttkick:'ham calf',skip:'quad calf',kneetwist:'abs obl'};
 const MUN={chest:'Chest',tri:'Triceps',delt:'Shoulders',lats:'Lats',bi:'Biceps',fore:'Forearms',traps:'Traps',ham:'Hamstrings',glute:'Glutes',back:'Lower back',quad:'Quads',calf:'Calves',abs:'Abs',obl:'Obliques'};
 for(const k in MUS)if(DF[k])DF[k].mu=MUS[k];
 const GRIP={run:[.6,.6],highknee:[.6,.6],buttkick:[.6,.6],skip:[.6,.6],sprinter:[.6,.6],lungeknee:[.6,.6],squatpunch:[1,1]};
@@ -1205,7 +1212,7 @@ document.getElementById("fmin").addEventListener("pointerdown",e=>e.stopPropagat
 const T=s=>{const m=/(\d+):(\d\d)/.exec(s);return m?+m[1]*60+ +m[2]:0};
 function steps(w){
   const out=[];
-  w.blocks.forEach((b,bi)=>{
+  w.blocks.forEach((b,bi)=>{if(b.opt)return;
     const reps=b.s&&/×(\d+)/.test(b.s)?+/×(\d+)/.exec(b.s)[1]:1;
     const note=(b.note||(b.s?w.dflt:"")||"");
     const btw=/rest (\d+:\d\d) between/i.exec(note), aft=/(\d+:\d\d) after/i.exec(note);
