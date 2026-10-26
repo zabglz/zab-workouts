@@ -17,7 +17,7 @@
 /* Layout: dark training binder. Filter chips, color-coded workout tabs, one sheet per workout; full-screen player with an orbitable 3D mannequin. Accent changes per workout type. */
 :root{
   --bg:#0a0a0a; --sheet:#131313; --sheet2:#1a1a1a; --ink:#f3f3f3; --muted:#a2a2a2; --line:#262626;
-  --c-chest:#D24E26; --c-back:#4B6BE2; --c-legs:#ADD893; --c-shoulders:#F1A33A; --c-arms:#F7F56B; --c-circuit:#39FF6A; --c-bw:#3DDCFF; --c-plan:#B794FF; --c-p6w:#B794FF; --c-be1:#4FD1C5; --c-in2:#FF7AB6; --c-ad3:#FF9F43; --c-d0:#FF7A59; --c-d1:#4FC3F7; --c-d2:#9CE37D; --c-d3:#FFC857; --c-d4:#C792FF; --c-d5:#FF6FA8; --c-d6:#5EE6C8; --c-d7:#FFA45C;
+  --c-chest:#D24E26; --c-back:#3DDCFF; --c-legs:#ADD893; --c-shoulders:#F1A33A; --c-arms:#F7F56B; --c-circuit:#39FF6A; --c-bw:#4B6BE2; --c-plan:#B794FF; --c-p6w:#B794FF; --c-be1:#4FD1C5; --c-in2:#FF7AB6; --c-ad3:#FF9F43; --c-d0:#FF7A59; --c-d1:#4FC3F7; --c-d2:#9CE37D; --c-d3:#FFC857; --c-d4:#C792FF; --c-d5:#FF6FA8; --c-d6:#5EE6C8; --c-d7:#FFA45C;
   --accent:#D24E26; --accent-ink:#ffffff; --bar:#2a2a2a;
   --display:"Anton","Arial Narrow",Impact,sans-serif; --body:"Inter",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
   color-scheme:dark;
@@ -478,7 +478,7 @@ const W=[
 const PLANS=[{"id": "p6w", "name": "6-Week Whole Body", "desc": "Weeks 1–3 build the foundation, weeks 4–6 raise the intensity. 3 training days + optional recovery.", "days": ["p6w-1a", "p6w-2a", "p6w-3a", "p6w-4a", "p6w-1b", "p6w-2b", "p6w-3b", "p6w-4b"]}, {"id": "be1", "name": "Beginner (Be1)", "desc": "Three full-body gym days hitting every muscle group.", "days": ["be1-1", "be1-2", "be1-3"]}, {"id": "in2", "name": "Intermediate (In2)", "desc": "Five-day split: push, pull, legs, push, pull.", "days": ["in2-1", "in2-2", "in2-3", "in2-4", "in2-5"]}, {"id": "ad3", "name": "Advanced (Ad3)", "desc": "Six training days with heavy top sets and pyramids. Day 4 is rest.", "days": ["ad3-1", "ad3-2", "ad3-3", "ad3-5", "ad3-6", "ad3-7"]}];
 const GROUPS=[["all","All"],["gym","Gym strength"],["db","Dumbbell / kettlebell"],["bw","No equipment"]];
 const GL={gym:"Gym",db:"Circuit",bw:"Bodyweight",plan:"Plan"};
-const ACC={chest:["--c-chest","#fff"],back:["--c-back","#fff"],legs:["--c-legs","#0a0a0a"],shoulders:["--c-shoulders","#0a0a0a"],arms:["--c-arms","#0a0a0a"],db:["--c-circuit","#0a0a0a"],bw:["--c-bw","#0a0a0a"],plan:["--c-plan","#0a0a0a"]};
+const ACC={chest:["--c-chest","#fff"],back:["--c-back","#0a0a0a"],legs:["--c-legs","#0a0a0a"],shoulders:["--c-shoulders","#0a0a0a"],arms:["--c-arms","#0a0a0a"],db:["--c-circuit","#0a0a0a"],bw:["--c-bw","#fff"],plan:["--c-plan","#0a0a0a"]};
 const dayIdx=w=>PLANS.find(p=>p.id===w.plan).days.indexOf(w.id);
 const accOf=w=>w.plan?["--c-d"+dayIdx(w),"#0a0a0a"]:ACC[w.g==="gym"?w.id:w.g];
 const SIG={chest:"Barbell flat bench press",back:"Weighted pull-ups",legs:"Barbell back squat",shoulders:"Barbell military press",arms:"EZ-bar standing curls",hiit:"DB thrusters",kb:"KB swings",dbc:"DB tempo squat + overhead press + punches",climb:"DB squat jump + curl + press",build:"DB clean",push:"Walkouts + low-impact jump",upper:"Alternating snatch",fire:"Squat jump",disc:"Burpees"};
