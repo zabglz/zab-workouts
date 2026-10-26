@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <meta name="theme-color" content="#0a0a0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -108,6 +110,7 @@ li.go:hover span:first-child{color:var(--accent)}
 .dcard .db span{font-size:.8rem;color:var(--mute2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dcard .dgo{font-size:1.6rem;color:var(--mute2)}
 .pnav a{color:inherit}
+.ver{margin:8px 0 0;text-align:center;font-size:.72rem;color:var(--mute2)}
 .pnav{display:flex;flex-direction:column;gap:6px}.pnav small{color:var(--mute2,#8e8e92)}.pnav small b{color:var(--ink)}
 .libhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:6px}
 .libhead h2{margin:0;font-size:.85rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:600}
@@ -332,6 +335,7 @@ button:active{transform:scale(.96);opacity:.85}
   <div class="libhead"><h2>Workout library</h2><span id="count"></span></div>
   <div class="grid" id="grid"></div>
   </div>
+  <p class="ver">Version 26 · Oct 26, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span>4 programs</span></div>
@@ -1217,7 +1221,13 @@ function g3meshPose(M,J,HI){
   for(const S2 of['R','L']){const f=S2==='R'?(p=>p):mir;
     const chain=(Qpar,a0,b0,a,b,ref)=>{const yo=nrm(sub(b0,a0)),yc=nrm(sub(b,a));const Q=qmul(qswing(qv(Qpar,yo),yc),Qpar);return{Q,Fo:frameRule(yo,ref)}};
     const zf=[0,0,1],xf=[1,0,0];
+    const hinge=(c,bi,a,b,cd,restDir)=>{const F=M.meta.frames[bi],FRf=[F[0][0],F[0][1],F[0][2],F[1][0],F[1][1],F[1][2],F[2][0],F[2][1],F[2][2]];
+      const Mb=qmul(c.Q,qmul(qcols(c.Fo[0],c.Fo[1],c.Fo[2]),FRf)),u=nrm(sub(b,a)),a0=qv(Mb,restDir),d=sub(cd,mul(u,dot(cd,u))),bend=vlen(d);
+      const w=Math.max(0,Math.min(1,(bend-.12)/.35));if(w<=0)return;const p0=nrm(sub(a0,mul(u,dot(a0,u)))),p1=mul(d,1/bend);
+      const phi=Math.atan2(dot(cr(p0,p1),u),dot(p0,p1))*w;c.Q=qmul(qrot(u,phi),c.Q)};
+    const BI={R:[3,6],L:[9,12]}[S2];
     const ua=chain(Qc,R0['sh'+S2],R0['el'+S2],J['sh'+S2],J['el'+S2],zf);
+    hinge(ua,BI[0],J['sh'+S2],J['el'+S2],nrm(sub(J['hand'+S2],J['el'+S2])),[0,0,1]);
     put(ua.Q,ua.Fo,J['sh'+S2],f(rest.sh),vlen(sub(J['el'+S2],J['sh'+S2]))/(L0['ua'+S2]*S));cl.push([qslerp(Qc,ua.Q,.5),J['sh'+S2],f(rest.sh)]);
     const fa=chain(ua.Q,R0['el'+S2],R0['hand'+S2],J['el'+S2],J['hand'+S2],zf);
     const E=J['el'+S2],Hp=J['hand'+S2],fdir=nrm(sub(Hp,E)),gm=M.meta.grip[S2],hi=HI&&HI[S2];
@@ -1242,6 +1252,7 @@ function g3meshPose(M,J,HI){
     bones.push({x:faAx[0],y:faAx[1],z:faAx[2],o:E,mo:f(rest.el),k:faK});
     bones.push({x:ax[0],y:ax[1],z:ax[2],o:wr,mo:f(rest.wr),k:0});JW[S2]=wr;
     const th=chain(Qp,R0['hip'+S2],R0['knee'+S2],J['hip'+S2],J['knee'+S2],xf);
+    hinge(th,BI[1],J['hip'+S2],J['knee'+S2],nrm(sub(J['ank'+S2],J['knee'+S2])),[0,0,-1]);
     put(th.Q,th.Fo,J['hip'+S2],f(rest.hip),BL.th/(L0['th'+S2]*S));
     const sn=chain(th.Q,R0['knee'+S2],R0['ank'+S2],J['knee'+S2],J['ank'+S2],xf);
     put(sn.Q,sn.Fo,J['knee'+S2],f(rest.kn),BL.sh/(L0['sh'+S2]*S));
