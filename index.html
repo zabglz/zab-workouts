@@ -506,7 +506,7 @@ function renderHome(){
   if(group==="plan")group="all";
   document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-selected",b.dataset.m===hmode));
   document.getElementById("wmode").hidden=hmode!=="w";document.getElementById("pmode").hidden=hmode!=="p";
-  const nw=W.filter(w=>w.g!=="plan").length;
+  const nw=W.length;
   document.getElementById("hsub").textContent=hmode==="w"?`${nw} workouts. Tap one to see the details.`:`${PLANS.length} training plans. Pick one to see every day.`;
   const car=document.getElementById("car"),pcar=document.getElementById("pcar");clearArts(car);clearArts(pcar);
   if(hmode==="p"){
@@ -515,10 +515,10 @@ function renderHome(){
     document.getElementById("plans").innerHTML=PLANS.map(p=>`<div class="plan" style="--pc:var(--c-${p.id})"><button class="ph" data-plan="${p.id}"><b>${esc(p.name)}</b><span>${p.days.length} workouts ›</span></button><p>${esc(p.desc)}</p><div class="pdays">${p.days.map((id,i)=>{const w=W.find(x=>x.id===id);return `<button class="pday" data-id="${id}" style="--dc:var(--c-d${i})"><b>${esc(w.day)}</b><small>${esc(w.focus)}</small></button>`}).join("")}</div></div>`).join("");
     save();return}
   document.getElementById("chips").innerHTML=GROUPS.map(([k,l])=>`<button class="chip" data-g="${k}" aria-pressed="${k===group}">${l}</button>`).join("");
-  const list=W.filter(w=>w.g!=="plan"&&(group==="all"||w.g===group));
-  car.innerHTML=list.map(w=>`<button class="card" data-id="${w.id}" style="--c:var(${accOf(w)[0]})" aria-label="${esc(w.name)}"><canvas aria-hidden="true"></canvas><span class="dur">${dmin(w)}</span><span class="ov"><span class="tag">${GL[w.g]}</span><h3>${esc(w.name)}</h3><span class="eq">${esc(equip(w))}</span></span></button>`).join("");
+  const list=W.filter(w=>group==="all"||w.g===group||(group==="gym"&&w.g==="plan"));
+  car.innerHTML=list.map(w=>`<button class="card" data-id="${w.id}" style="--c:var(${accOf(w)[0]})" aria-label="${esc(w.name)}"><canvas aria-hidden="true"></canvas><span class="dur">${dmin(w)}</span><span class="ov"><span class="tag">${w.plan?esc(w.name.split(" · ")[0]+" · "+w.day):GL[w.g]}</span><h3>${esc(w.plan?w.focus:w.name)}</h3><span class="eq">${esc(equip(w))}</span></span></button>`).join("");
   car.querySelectorAll(".card").forEach(c=>addArt(c.querySelector("canvas"),W.find(w=>w.id===c.dataset.id)));car.scrollLeft=0;
-  document.getElementById("grid").innerHTML=list.map(w=>`<button class="gcard" data-id="${w.id}" style="--c:var(${accOf(w)[0]})"><small><i></i>${GL[w.g]}</small><b>${esc(w.name)}</b><span>${dmin(w)} · ${esc(equip(w))}</span></button>`).join("");
+  document.getElementById("grid").innerHTML=list.map(w=>`<button class="gcard" data-id="${w.id}" style="--c:var(${accOf(w)[0]})"><small><i></i>${w.plan?esc(w.name):GL[w.g]}</small><b>${esc(w.plan?w.focus:w.name)}</b><span>${dmin(w)} · ${esc(equip(w))}</span></button>`).join("");
   document.getElementById("count").textContent=`${list.length} available`;
   save();
 }
