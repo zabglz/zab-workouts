@@ -444,6 +444,21 @@ header{position:relative}
 .cform input:focus-visible,.cform select:focus-visible,.cform textarea:focus-visible,.entry textarea:focus-visible,.scard input:focus-visible,.scard textarea:focus-visible,.edf input:focus-visible,.edf select:focus-visible,.edf textarea:focus-visible{outline:2px solid var(--c-chest);outline-offset:0;border-color:transparent}
 .fact{display:grid;grid-template-columns:1fr 2fr;gap:10px}
 .fact .cbtn,.cbtn{min-height:44px}
+
+/* v41 */
+.ldone{margin:-6px 0 0;color:var(--mute2);font-size:.9rem}
+.upnext em{font-style:normal;color:var(--mute2);font-size:.82rem;margin-top:4px;border-top:1px solid var(--line);padding-top:6px}
+details.sx{padding:0;gap:0}
+details.sx>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:56px;padding:0 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+details.sx>summary::-webkit-details-marker{display:none}
+details.sx>summary h3{flex:1}
+details.sx>summary .shint{color:var(--mute2);font-size:.85rem;text-align:right;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.sx>summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--mute2);border-bottom:2px solid var(--mute2);transform:rotate(45deg) translateY(-3px);transition:transform .2s ease;flex:none}
+details.sx[open]>summary::after{transform:rotate(-135deg) translateY(-1px)}
+details.sx>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2px;border-radius:18px}
+.sbody{display:grid;gap:10px;padding:0 16px 16px}
+@media (prefers-reduced-motion:reduce){details.sx>summary::after{transition:none}}
+.pday.last{position:relative}.pday.last::after{content:"";position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:var(--ink);border:2px solid var(--bg)}
 </style>
 
 </head>
@@ -464,7 +479,7 @@ header{position:relative}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 40 · Oct 28, 2026</p>
+  <p class="ver">Version 41 · Oct 28, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -670,8 +685,9 @@ function renderDetail(w){
   const hero=document.getElementById("hero");clearArts(hero);addArt(document.getElementById("heroCv"),w,0);
   document.querySelector("#dback").lastChild.textContent=w.plan?PLANS.find(p=>p.id===w.plan).name:"All workouts";
   {let pn=document.getElementById("pnav");if(!pn){pn=document.createElement("div");pn.id="pnav";pn.className="pnav";document.getElementById("stats").before(pn)}
-   const p=w.plan&&PLANS.find(x=>x.id===w.plan);pn.hidden=!p;if(p)pn.innerHTML=`<small>Part of <a href="#plan-${p.id}"><b>${esc(p.name)}</b></a></small><div class="pdays">${p.days.map(id=>{const x=W.find(y=>y.id===id);return `<button class="pday${id===w.id?" on":""}" data-id="${id}" style="--dc:var(--c-d${p.days.indexOf(id)})"><b>${esc(x.day)}</b></button>`}).join("")}</div>`;
+   const p=PLANS.find(x=>x.id===w.plan)||PLANS.find(x=>x.days.includes(w.id));pn.hidden=!p;const lp=p&&lastInPlan(p);if(p)pn.innerHTML=`<small>Part of <a href="#plan-${p.id}"><b>${esc(p.name)}</b></a>${lp?` · last did <b>${esc(W.find(y=>y.id===lp.id)?.day||"")}</b> ${relDay(lp.ts)}`:""}</small><div class="pdays">${p.days.map(id=>{const x=W.find(y=>y.id===id);return `<button class="pday${id===w.id?" on":""}${lp&&lp.id===id?" last":""}" data-id="${id}" style="--dc:var(--c-d${p.days.indexOf(id)})"><b>${esc(x.day)}</b></button>`}).join("")}</div>`;
    pn.onclick=e=>{const c=e.target.closest(".pday");if(c&&c.dataset.id!==w.id)location.hash=c.dataset.id}}
+  {let ld=document.getElementById("ldone");if(!ld){ld=document.createElement("p");ld.id="ldone";ld.className="ldone";document.getElementById("stats").before(ld)}const l=lastDone(w.id);ld.hidden=!l;if(l)ld.textContent=`Last done ${relDay(l.ts)}${l.dur?` · ${l.dur} min`:""}`}
   const st=steps(w),moves=new Set(st.filter(x=>!x.rest).map(x=>x.n)).size,rounds=w.blocks.filter(b=>!/warm|cool/i.test(b.t)).length;
   const lvl=w.g==="gym"?"Gym":w.g==="plan"?w.day:w.meta[3]||"All";
   document.getElementById("stats").innerHTML=[[(w.total?"":"≈")+estMin(w),"Minutes"],[rounds,"Rounds"],[moves,"Moves"],[lvl,"Level"]].map(([v,l])=>`<div class="stat"><b>${esc(String(v))}</b><small>${l}</small></div>`).join("");
@@ -710,11 +726,12 @@ function renderPlan(p){
   const ex=new Set();ws.forEach(w=>steps(w).forEach(s=>{if(!s.rest)ex.add(s.n.replace(/ @\d+%| \([LR]\)/g,""))}));
   document.getElementById("pstats").innerHTML=[[ws.length,"Workouts"],["≈"+Math.round(tot/ws.length),"Min / day"],[ex.size,"Exercises"],["≈"+Math.round(tot/60*10)/10+"h","Per cycle"]].map(([v,l])=>`<div class="stat"><b>${v}</b><small>${l}</small></div>`).join("");
   document.getElementById("pcount").textContent=`${ws.length} days`;
+  const lp=lastInPlan(p);
   document.getElementById("pdaylist").innerHTML=ws.map((w,i)=>{
     const rows=w.blocks.filter(b=>!b.opt).map(b=>{const multi=b.i.length>1&&b.t!=="Exercise";
       return multi?`<li class="hd"><span>${esc(b.t)} · ${esc(b.n)}</span><span>${esc(b.s||"")}</span></li>`+b.i.map(([n,a])=>`<li><span>${esc(n)}</span><span>${esc(a)}</span></li>`).join("")
         :b.i.map(([n,a])=>`<li><span>${esc(n)}</span><span>${b.s?esc(b.s)+" · ":""}${esc(a)}</span></li>`).join("")}).join("");
-    return `<section class="dsec" style="--dc:var(--c-d${i})"><button class="dhead" data-id="${w.id}"><span class="dn">${String(i+1).padStart(2,"0")}</span><span class="db"><small>${esc(w.day)} · ≈${mins[i]} min</small><b>${esc(w.focus)}</b></span><span class="dgo">›</span></button><ul>${rows}</ul><button class="dstart" data-start="${w.id}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>Start ${esc(w.day)}</button></section>`}).join("");
+    return `<section class="dsec" style="--dc:var(--c-d${i})"><button class="dhead" data-id="${w.id}"><span class="dn">${String(i+1).padStart(2,"0")}</span><span class="db"><small>${esc(w.day)} · ≈${mins[i]} min${(()=>{const l=lastDone(w.id);return l?` · ${lp&&lp.id===w.id?"Last done":"Done"} ${relDay(l.ts)}`:""})()}</small><b>${esc(w.focus)}</b></span><span class="dgo">›</span></button><ul>${rows}</ul><button class="dstart" data-start="${w.id}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>Start ${esc(w.day)}</button></section>`}).join("");
 }
 document.getElementById("pdaylist").addEventListener("click",e=>{const st=e.target.closest("[data-start]");if(st){const w=W.find(x=>x.id===st.dataset.start);cur=w.id;setAccent(w);start(w);return}const c=e.target.closest(".dhead");if(c)openW(c.dataset.id,null)});
 document.getElementById("pback").addEventListener("click",()=>{hmode="p";location.hash="";renderHome()});
@@ -1729,12 +1746,15 @@ applyCustom();
 /* ---- search, favs, up next ---- */
 function matchQ(w){if(!srchQ)return true;const q=srchQ.toLowerCase();return (w.name+" "+(w.focus||"")+" "+w.blocks.map(b=>b.i.map(x=>x[0]).join(" ")).join(" ")).toLowerCase().includes(q)}
 document.getElementById("srch").addEventListener("input",e=>{srchQ=e.target.value.trim();renderHome()});
+function lastInPlan(p){let b=null;for(const e of logGet())if(p.days.includes(e.id)&&(!b||e.ts>b.ts))b=e;return b}
+function lastDone(id){let b=null;for(const e of logGet())if(e.id===id&&(!b||e.ts>b.ts))b=e;return b}
+function relDay(ts){const d=Math.round((new Date(new Date().toDateString())-new Date(new Date(ts).toDateString()))/864e5);return d===0?"today":d===1?"yesterday":d<7?new Date(ts).toLocaleDateString([],{weekday:"long"}):new Date(ts).toLocaleDateString([],{month:"short",day:"numeric"})}
 function renderUpNext(){const el=document.getElementById("upn");const lg=logGet().filter(e=>e.id).sort((a,b)=>b.ts-a.ts);
   for(const e of lg){const w=W.find(x=>x.id===e.id);if(!w||!w.plan)continue;const p=PLANS.find(x=>x.id===w.plan);if(!p)continue;const i=p.days.indexOf(w.id);
     let np=p,nid=p.days[(i+1)%p.days.length];
     if(i===p.days.length-1){const g=PLANS.filter(x=>x.grp===p.grp),gi=g.indexOf(p);if(gi>=0&&gi<g.length-1&&/Weeks? \d/.test(p.name)){/* stay in phase until user moves on */}}
     const nw=W.find(x=>x.id===nid);if(!nw)break;
-    el.innerHTML=`<button class="upnext" data-id="${nw.id}"><small>Up next · ${esc(np.grp?np.grp.replace(/ \(Gym\)/,""):"")} ${esc(np.name)}</small><b>${esc(nw.day)} · ${esc(nw.name)}</b><span>${esc(nw.focus||"")} · ${dmin(nw)}</span></button>`;
+    el.innerHTML=`<button class="upnext" data-id="${nw.id}"><small>Up next · ${esc(np.grp?np.grp.replace(/ \(Gym\)/,""):"")} ${esc(np.name)}</small><b>${esc(nw.day)} · ${esc(nw.name)}</b><span>${esc(nw.focus||"")} · ${dmin(nw)}</span><em>Last: ${esc(w.day)} · ${esc(w.name)} · ${relDay(e.ts)}</em></button>`;
     el.firstChild.onclick=()=>openW(nw.id,null);return}
   el.innerHTML=""}
 document.getElementById("dfav").addEventListener("click",()=>{const f=favs(),i=f.indexOf(cur);if(i>=0)f.splice(i,1);else f.push(cur);LS.set("zabFavs",f);dirty();const b=document.getElementById("dfav");b.textContent=i>=0?"☆":"★";b.classList.toggle("on",i<0);toast(i>=0?"Removed from favorites":"Added to favorites")});
@@ -1803,6 +1823,7 @@ async function doExport(){const blob=new Blob([JSON.stringify(exportAll(),null,1
   try{const file=new File([blob],name,{type:"application/json"});if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Zab Workouts backup"});LS.set("zabLastBackup",Date.now());return}}catch(e){if(e.name==="AbortError")return}
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();LS.set("zabLastBackup",Date.now())}
 /* ---- settings ---- */
+const SOPEN=new Set();
 function renderSettings(){const c=cfg(),el=document.getElementById("settings"),ver=document.querySelector(".ver").textContent,ls=LS.get("zabLastSync",0),lb=LS.get("zabLastBackup",0);
   const ago=t=>t?new Date(t).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"never";
   el.innerHTML=`<div class="dtop"><button class="back" id="sback"><span class="ic"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></span>Back</button></div>
@@ -1818,6 +1839,8 @@ function renderSettings(){const c=cfg(),el=document.getElementById("settings"),v
    <ol><li>New Shortcut → <b>Find Workouts</b> where Start Date is in the last 7 days.</li><li><b>Repeat with Each</b> → <b>Text</b>: Type | Start Date | Duration | Active Energy | Distance</li><li><b>Combine Text</b> (New Lines) → <b>Base64 Encode</b>.</li><li><b>Get Contents of URL</b>: <code>https://api.github.com/repos/${esc(c.repo)}/contents/data/apple/</code> + Current Date (format yyyyMMddHHmmss) + <code>.txt</code>. Method PUT. Header <code>Authorization</code> = <code>Bearer YOUR_TOKEN</code>. JSON body: <code>message</code> = Apple sync, <code>content</code> = Base64 Encoded.</li><li>Automation → <b>When Apple Watch workout ends</b> (or daily) → run it, Ask Before Running off.</li></ol>
    <p><b>Manual:</b> paste the Shortcut’s text here.</p><textarea id="impT" rows="3" placeholder="Paste workouts here"></textarea><div class="brow"><button class="cbtn" id="impB">Import</button></div><span class="sstat" id="impM"></span></div>
   <div class="scard"><h3>About</h3><p>${esc(ver)} · ${W.length} workouts · ${customGet().filter(x=>!x.gone).length} custom</p></div>`;
+  {const hint={"Units":c.units,"Backup":"Last backup "+ago(lb),"Sync with GitHub":c.token?"On · "+ago(ls):"Off","Apple Fitness":"Import workouts","About":ver};
+   el.querySelectorAll(".scard").forEach(cd=>{const d=document.createElement("details");d.className="scard sx";const s=document.createElement("summary"),h3=cd.querySelector("h3"),t=h3.textContent,sp=document.createElement("span");sp.className="shint";sp.textContent=hint[t]||"";s.append(h3,sp);const bd=document.createElement("div");bd.className="sbody";bd.append(...cd.childNodes);d.append(s,bd);d.open=SOPEN.has(t);d.ontoggle=()=>{d.open?SOPEN.add(t):SOPEN.delete(t)};cd.replaceWith(d)})}
   el.querySelector("#sback").onclick=()=>{if(backOK&&history.length>1)history.back();else location.hash=""};
   el.querySelector("#uSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;const n=cfg();n.units=b.dataset.u;setCfg(n);renderSettings()};
   el.querySelector("#bExp").onclick=doExport;
