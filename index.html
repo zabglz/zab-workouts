@@ -363,6 +363,17 @@ button:active{transform:scale(.96);opacity:.85}
 .imp p{margin:0;color:var(--muted);font-size:.9rem}
 .imp ol{margin:0;padding-left:20px;color:var(--muted);font-size:.9rem;display:grid;gap:4px}
 
+.cgrid.wk{gap:8px 4px}
+.cgrid.wk .cday{max-width:none;aspect-ratio:auto;height:78px;border-radius:16px;display:flex;flex-direction:column;justify-content:center;gap:4px}
+.cgrid.wk .cday .wd{font-size:1.05rem;font-weight:600}
+.cgrid.wk .cday svg{width:22px;height:22px}
+.cgrid.wk .strk{align-self:center}
+.cday-detail{padding:20px}
+.cday-detail h3{font-size:1.3rem}
+.quote p{margin:0 0 14px;font-size:1.25rem;line-height:1.35;font-weight:600;text-wrap:balance}
+details.imp{padding:12px 16px}
+details.imp summary{color:var(--muted);font-size:.88rem;cursor:pointer}
+details.imp[open]{gap:10px}
 </style>
 
 </head>
@@ -381,7 +392,7 @@ button:active{transform:scale(.96);opacity:.85}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 31 · Oct 27, 2026</p>
+  <p class="ver">Version 32 · Oct 27, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span>5 plans</span></div>
@@ -1597,6 +1608,7 @@ async function start(w,from=0){
 
 /* ===== calendar & log ===== */
 let curRun=null,calMode="w",calRef=new Date(),calSel=null;
+const QUOTES=["The only workout you regret is the one you skip.","You don’t have to feel like it. You just have to start.","Thirty minutes from now you’ll be glad you did.","Strong is built on days like this one.","Show up for the version of you that’s waiting at the end."];
 try{calMode=localStorage.getItem("zabCalMode")||"w"}catch(e){}
 function logGet(){try{return JSON.parse(localStorage.getItem("zabLog")||"[]")}catch(e){return[]}}
 function logSet(a){try{localStorage.setItem("zabLog",JSON.stringify(a))}catch(e){}}
@@ -1623,6 +1635,7 @@ function streak(m){let n=0,w=monday(new Date());const has=w0=>{for(let i=0;i<7;i
   if(!has(w))w=addD(w,-7);while(has(w)){n++;w=addD(w,-7)}return n}
 const fmtT=ts=>new Date(ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
 function renderCal(){
+  if(!calSel)calSel=dkey(new Date());
   const m=byDay(),el=document.getElementById("cal"),today=dkey(new Date());
   let start,rows;
   if(calMode==="w"){start=monday(calRef);rows=1}
@@ -1632,19 +1645,19 @@ function renderCal(){
   let g=`<div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div><div class="dow">S</div><div></div>`;
   for(let r=0;r<rows;r++){let any=false;
     for(let c=0;c<7;c++){const d=addD(start,r*7+c),k=dkey(d),es=m[k]||[],out=calMode==="m"&&d.getMonth()!==calRef.getMonth();if(es.length)any=true;
-      g+=`<button class="cday${out?" out":""}${es.length?" has":""}${k===today?" today":""}${k===calSel?" sel":""}" data-k="${k}" aria-label="${d.toDateString()}${es.length?`, ${es.length} workout${es.length>1?"s":""}`:""}">${es.length?icoFor(es[0]):d.getDate()}${es.length>1?'<i class="more"></i>':""}</button>`}
+      g+=`<button class="cday${out?" out":""}${es.length?" has":""}${k===today?" today":""}${k===calSel?" sel":""}" data-k="${k}" aria-label="${d.toDateString()}${es.length?`, ${es.length} workout${es.length>1?"s":""}`:""}">${calMode==="w"?`<span class="wd">${d.getDate()}</span>${es.length?icoFor(es[0]):""}`:(es.length?icoFor(es[0]):d.getDate())}${es.length>1?'<i class="more"></i>':""}</button>`}
     g+=`<div class="strk${any?" on":""}">${any?ICO.check:""}</div>`}
   let det="";
   if(calSel){const es=m[calSel]||[],d=new Date(calSel+"T12:00");
     det=`<div class="cday-detail"><h3>${d.toLocaleDateString([],{weekday:"long",month:"long",day:"numeric"})}</h3>`+
-    (es.length?es.map(e=>`<div class="entry"><span class="csrc">${e.src==="apple"?"Apple Fitness":"Zab Workouts"}</span><div class="eh"><b>${esc(e.name)}</b><span class="em">${fmtT(e.ts)}</span></div><span class="em">${[e.plan,e.dur?e.dur+" min":"",e.kcal?Math.round(e.kcal)+" kcal":"",e.dist?e.dist:""].filter(Boolean).map(esc).join(" · ")}</span><textarea data-u="${e.uid}" placeholder="Add notes">${esc(e.notes||"")}</textarea><button class="del" data-del="${e.uid}">Remove</button></div>`).join(""):`<p class="em" style="margin:0">Nothing logged.</p>`)+
+    (es.length?es.map(e=>`<div class="entry"><span class="csrc">${e.src==="apple"?"Apple Fitness":"Zab Workouts"}</span><div class="eh"><b>${esc(e.name)}</b><span class="em">${fmtT(e.ts)}</span></div><span class="em">${[e.plan,e.dur?e.dur+" min":"",e.kcal?Math.round(e.kcal)+" kcal":"",e.dist?e.dist:""].filter(Boolean).map(esc).join(" · ")}</span><textarea data-u="${e.uid}" placeholder="Add notes">${esc(e.notes||"")}</textarea><button class="del" data-del="${e.uid}">Remove</button></div>`).join(""):`<div class="quote"><p>“${QUOTES[(+calSel.replace(/-/g,""))%QUOTES.length]}”</p>${calSel>=today?`<button class="cbtn pri" id="cgo">Pick a workout</button>`:`<span class="em">No workout logged.</span>`}</div>`)+
     `<button class="cbtn" id="cadd">+ Log a workout</button><div id="cformw"></div></div>`}
   el.innerHTML=`<div class="chead"><h2>${esc(title)}</h2><div class="cnav"><button id="cprev" aria-label="Previous">‹</button><button id="ctoday">Today</button><button id="cnext" aria-label="Next">›</button></div></div>
    <div class="cstats"><div><small>Your streak</small><b>${streak(m)} week${streak(m)===1?"":"s"}</b></div><div><small>${calMode==="w"?"This week":"This month"}</small><b>${inRange}</b></div></div>
    <div class="cview"><div class="seg" role="tablist" id="cseg"><button role="tab" data-v="w" aria-selected="${calMode==="w"}">Week</button><button role="tab" data-v="m" aria-selected="${calMode==="m"}">Month</button></div></div>
-   <div class="cgrid" id="cgrid">${g}</div>${det}
-   <div class="imp"><b>Apple Fitness</b><p>Bring in workouts from your iPhone with the “Zab Workouts Import” shortcut, or paste its output here.</p><textarea id="impT" rows="3" placeholder="Paste workouts here"></textarea><button class="cbtn" id="impB">Import</button><span class="em" id="impM"></span>
-   <details><summary class="em">Set up the shortcut</summary><ol><li>Open Shortcuts and create a new shortcut.</li><li>Add <b>Find Workouts</b>, sorted by Start Date, latest first, limit 50.</li><li>Add <b>Repeat with Each</b>. Inside, add <b>Text</b> with: Type | Start Date | Duration | Active Energy | Distance (one line each).</li><li>After the repeat, add <b>Combine Text</b> (New Lines), then <b>Copy to Clipboard</b>.</li><li>Run it, come back here and paste.</li></ol></details></div>`;
+   <div class="cgrid${calMode==="w"?" wk":""}" id="cgrid">${g}</div>${det}
+   <details class="imp"><summary>Import from Apple Fitness</summary><p>Bring in workouts from your iPhone with the “Zab Workouts Import” shortcut, or paste its output here.</p><textarea id="impT" rows="3" placeholder="Paste workouts here"></textarea><button class="cbtn" id="impB">Import</button><span class="em" id="impM"></span>
+   <details><summary class="em">Set up the shortcut</summary><ol><li>Open Shortcuts and create a new shortcut.</li><li>Add <b>Find Workouts</b>, sorted by Start Date, latest first, limit 50.</li><li>Add <b>Repeat with Each</b>. Inside, add <b>Text</b> with: Type | Start Date | Duration | Active Energy | Distance (one line each).</li><li>After the repeat, add <b>Combine Text</b> (New Lines), then <b>Copy to Clipboard</b>.</li><li>Run it, come back here and paste.</li></ol></details></details>`;
   el.querySelectorAll("#cgrid .cday").forEach(b=>b.onclick=()=>{calSel=calSel===b.dataset.k?null:b.dataset.k;renderCal()});
   el.querySelector("#cprev").onclick=()=>{calRef=calMode==="w"?addD(calRef,-7):new Date(calRef.getFullYear(),calRef.getMonth()-1,1);renderCal()};
   el.querySelector("#cnext").onclick=()=>{calRef=calMode==="w"?addD(calRef,7):new Date(calRef.getFullYear(),calRef.getMonth()+1,1);renderCal()};
@@ -1656,6 +1669,7 @@ function renderCal(){
     const sel=el.querySelector("#fW");sel.onchange=()=>{const w=W.find(x=>x.id===sel.value);el.querySelector("#fNl").hidden=!!w;if(w)el.querySelector("#fD").value=estMin(w)};
     el.querySelector("#fS").onclick=()=>{const w=W.find(x=>x.id===sel.value),nm=w?w.name:el.querySelector("#fN").value.trim()||"Workout",[hh,mm]=(el.querySelector("#fT").value||"07:00").split(":"),d=new Date(calSel+"T00:00");d.setHours(+hh,+mm);
       logAdd({id:w?w.id:"",name:nm,plan:w&&w.plan?w.meta[0]+" · "+w.day:"",ts:d.getTime(),dur:+el.querySelector("#fD").value||0,notes:el.querySelector("#fO").value,src:w?"app":"manual"});renderCal()}};
+  {const cg=el.querySelector("#cgo");if(cg)cg.onclick=()=>{hmode="w";try{localStorage.setItem("zabMode","w")}catch(x){}renderHome();window.scrollTo(0,0)}}
   el.querySelector("#impB").onclick=()=>{const n=importText(el.querySelector("#impT").value);el.querySelector("#impM").textContent=n<0?"Couldn’t read that. Check the shortcut format.":`Imported ${n} workout${n===1?"":"s"}.`;if(n>0)setTimeout(renderCal,900)};
 }
 function parseDur(s){s=String(s||"").trim();let m;if((m=/^(\d+):(\d\d)(?::(\d\d))?$/.exec(s)))return m[3]!==undefined?+m[1]*60+ +m[2]:+m[1];
