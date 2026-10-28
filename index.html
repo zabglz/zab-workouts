@@ -479,7 +479,7 @@ details.sx>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2p
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 42 · Oct 28, 2026</p>
+  <p class="ver">Version 43 · Oct 28, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -1713,20 +1713,21 @@ function paint(){
 function go(d){pi=Math.max(0,pi+d);beep(d>0?660:440,.1);show()}
 function paintEl(){const e=elapsed,t=e>=3600?`${Math.floor(e/3600)}:${String(Math.floor(e/60)%60).padStart(2,"0")}:${String(e%60).padStart(2,"0")}`:fmt(e);document.getElementById("pelT").textContent=t;document.getElementById("pel").classList.toggle("paused",!running)}
 function step(){
-  const s=PS[pi]; if(s&&running){elapsed++;paintEl()}
+  const s=PS[pi]; if(s&&running){elapsed=realEl();paintEl()}
   if(!s||!running||s.reps) return;
   left--; if(left<=3&&left>0) beep(660,.08);
   if(left<=0){beep(990,.3);pi++;show();return}
   paint();
 }
 async function start(w,from=0){
-  curRun=w;runSets=[];runStart=Date.now();PS=steps(w);pi=from;running=true;elapsed=0;paintEl();libY=window.scrollY;document.querySelector(".wrap").hidden=true;player.hidden=false;window.scrollTo(0,0);
+  curRun=w;runSets=[];runStart=Date.now();pausedMs=0;pauseAt=0;PS=steps(w);pi=from;running=true;elapsed=0;paintEl();libY=window.scrollY;document.querySelector(".wrap").hidden=true;player.hidden=false;window.scrollTo(0,0);
   beep(880,.12);show();clearInterval(tick);tick=setInterval(step,1000);
   keepAwake(true);
 }
 
 /* ===== v35: store, sync, lifts, editor, settings ===== */
-let runSets=[],runStart=0,srchQ="";
+let runSets=[],runStart=0,pausedMs=0,pauseAt=0,srchQ="";
+const realEl=()=>runStart?Math.max(0,Math.floor((Date.now()-runStart-pausedMs-(pauseAt?Date.now()-pauseAt:0))/1000)):0;
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const uidN=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const cfg=()=>LS.get("zabCfg",{units:"lb",repo:"zabglz/zab-workouts",branch:"main",path:"data/zab-log.json",token:""});
@@ -1769,7 +1770,7 @@ function saveSet(s){const wv=parseFloat((document.getElementById("pwW")||{}).val
   if(!(wv>0)||!curRun)return;const kg=toKg(wv,cfg().units),best=exHist(s.n).reduce((m,x)=>Math.max(m,x.kg),0);
   const rec={uid:uidN(),ex:s.n,ts:Date.now(),kg,r:rv,wid:curRun.id};const a=setsGet();a.push(rec);LS.set("zabSets",a);runSets.push(rec);dirty();
   if(best&&kg>best+0.01){toast("New PR · "+s.n.replace(/ \((left|right)\)/,""));beep(1320,.25)}}
-function logRun(partial){if(!curRun||elapsed<60)return;
+function logRun(partial){if(!curRun)return;elapsed=Math.max(elapsed,realEl());if(elapsed<60)return;
   logAdd({id:curRun.id,name:curRun.name,plan:curRun.plan?curRun.meta[0]+" · "+curRun.day:"",ts:runStart||Date.now()-elapsed*1000,dur:Math.round(elapsed/60),src:"app",sets:runSets.map(x=>({ex:x.ex,kg:x.kg,r:x.r})),partial:partial||undefined});
   curRun=null}
 function setSum(sets){const g={};for(const s of sets){(g[s.ex]=g[s.ex]||[]).push(s)}const u=cfg().units;
@@ -1969,11 +1970,11 @@ function finish(){
   document.getElementById("pnext").textContent=`Nice work. Total time ${document.getElementById("pelT").textContent}.`;document.getElementById("pup").innerHTML="";document.getElementById("psub").textContent="";document.getElementById("pbar").style.width="100%";
   document.getElementById("pmain").textContent="Close";setFig("Box breathing");clearInterval(tick);beep(990,.5);
 }
-function close(){if(curRun&&elapsed>=600)logRun(true);curRun=null;document.getElementById("pw").hidden=true;clearInterval(tick);player.hidden=true;document.querySelector(".wrap").hidden=false;window.scrollTo(0,libY||0);keepAwake(false)}
+function close(){if(curRun){elapsed=realEl();if(elapsed>=60&&confirm(`Save this workout to your calendar? (${Math.round(elapsed/60)} min)`))logRun(true)}curRun=null;document.getElementById("pw").hidden=true;clearInterval(tick);player.hidden=true;document.querySelector(".wrap").hidden=false;window.scrollTo(0,libY||0);keepAwake(false)}
 document.getElementById("pmain").addEventListener("click",()=>{
   const s=PS[pi]; if(!s){close();return}
   if(s.reps){saveSet(s);beep(990,.2);pi++;show();return}
-  running=!running;paint();paintEl();
+  running=!running;if(!running)pauseAt=Date.now();else if(pauseAt){pausedMs+=Date.now()-pauseAt;pauseAt=0}paint();paintEl();
 });
 document.getElementById("pskip").addEventListener("click",()=>{if(PS[pi])go(1)});
 document.getElementById("pprev").addEventListener("click",()=>go(-1));
