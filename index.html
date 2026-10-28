@@ -479,7 +479,7 @@ details.sx>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2p
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 41 · Oct 28, 2026</p>
+  <p class="ver">Version 42 · Oct 28, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -1806,16 +1806,17 @@ function mergeAll(d){if(!d||typeof d!=="object")return false;const del=new Set([
 let syncT=null,syncing=false;
 function dirty(){if(!cfg().token)return;clearTimeout(syncT);syncT=setTimeout(()=>sync(true),2500)}
 const b64e=s=>btoa(unescape(encodeURIComponent(s))),b64d=s=>decodeURIComponent(escape(atob(s.replace(/\s/g,""))));
-async function gh(path,opt={}){const c=cfg();const r=await fetch(`https://api.github.com/repos/${c.repo}/contents/${path}${opt.method?"":`?ref=${c.branch}`}`,{...opt,headers:{Authorization:"Bearer "+c.token,Accept:"application/vnd.github+json","Content-Type":"application/json"}});if(r.status===404)return null;if(!r.ok)throw new Error("GitHub "+r.status);return r.json()}
+async function gh(path,opt={}){const c=cfg();const r=await fetch(`https://api.github.com/repos/${c.repo}/contents/${path}${opt.method?"":`?ref=${c.branch}&t=${Date.now()}`}`,{cache:"no-store",...opt,headers:{Authorization:"Bearer "+c.token,Accept:"application/vnd.github+json","Content-Type":"application/json"}});if(r.status===404)return null;if(!r.ok){const e=new Error("GitHub "+r.status);e.status=r.status;throw e}return r.json()}
 async function sync(quiet){const c=cfg();if(!c.token||syncing)return;syncing=true;let msg="";
   try{const f=await gh(c.path);let sha;if(f){sha=f.sha;mergeAll(JSON.parse(b64d(f.content)))}
     let imp=0;const inbox=await gh("data/apple");if(Array.isArray(inbox))for(const it of inbox){if(!/\.txt$/.test(it.name))continue;const fi=await gh(it.path);const n=importText(b64d(fi.content));if(n>0)imp+=n;
       await gh(it.path,{method:"DELETE",body:JSON.stringify({message:"Processed Apple import",sha:it.sha,branch:c.branch})})}
     applyCustom();
-    await gh(c.path,{method:"PUT",body:JSON.stringify({message:"Sync workout log",content:b64e(JSON.stringify(exportAll())),branch:c.branch,...(sha?{sha}:{})})});
+    for(let tr=0;;tr++){try{await gh(c.path,{method:"PUT",body:JSON.stringify({message:"Sync workout log",content:b64e(JSON.stringify(exportAll())),branch:c.branch,...(sha?{sha}:{})})});break}
+      catch(e){if(!(e.status===409||e.status===422)||tr>=3)throw e;await new Promise(r=>setTimeout(r,800*(tr+1)));const f2=await gh(c.path);sha=f2?f2.sha:undefined;if(f2)mergeAll(JSON.parse(b64d(f2.content)))}}
     LS.set("zabLastSync",Date.now());msg=imp?`Synced · ${imp} Apple workout${imp>1?"s":""} added`:"Synced";
     if(!document.getElementById("home").hidden&&hmode==="c")renderCal()}
-  catch(e){msg="Sync failed: "+e.message}
+  catch(e){msg=e.status===401?"Sync failed: token expired or wrong. Update it in Settings.":e.status===409?"Sync conflict, will retry shortly.":"Sync failed: "+e.message;if(e.status===409)setTimeout(()=>sync(true),5000)}
   syncing=false;const s=document.getElementById("syncStat");if(s)s.textContent=msg;if(!quiet||/fail|Apple/.test(msg))toast(msg)}
 function bootSync(){if(cfg().token)sync(true)}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&cfg().token&&Date.now()-LS.get("zabLastSync",0)>300000)sync(true)});
