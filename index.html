@@ -411,14 +411,7 @@ header{position:relative}
 .esets{color:var(--muted);font-size:.85rem;margin:0;padding-left:16px;list-style:disc}.esets li{display:list-item;border:0;padding:1px 0;background:none}
 
 /* v36 nav & layout */
-body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 72px)}
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(3,1fr);background:var(--bg);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 4px) max(8px,env(safe-area-inset-left,0px))}
-.tabbar button{border:0;background:none;color:var(--mute2);display:grid;justify-items:center;gap:3px;min-height:52px;padding:6px 0;font:600 .72rem var(--body);letter-spacing:.01em;-webkit-tap-highlight-color:transparent}
-.tabbar svg{width:24px;height:24px}
-.tabbar button[aria-selected="true"]{color:var(--ink)}
-.tabbar button[aria-selected="true"] svg{color:var(--c-chest)}
-.tabbar button:focus-visible{outline:2px solid var(--ink);outline-offset:-4px;border-radius:12px}
-@media (min-width:700px){.tabbar{left:50%;right:auto;transform:translateX(-50%);width:min(860px,100%);border:1px solid var(--line);border-bottom:0;border-radius:16px 16px 0 0}}
+.seg.tabs3{grid-template-columns:1fr 1fr 1fr}
 .libhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px}
 .libhead h2{font-family:var(--body);font-size:1.35rem;font-weight:700;letter-spacing:-.01em;text-transform:none;color:var(--ink);margin:0}
 .newbtn{margin-left:0}
@@ -431,6 +424,26 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 72px)}
 .srch:focus-visible{outline:2px solid var(--c-chest);outline-offset:0;border-color:transparent}
 .libhead .lcount{color:var(--mute2);font-family:var(--body)}
 .gcard b{overflow-wrap:normal!important;word-break:normal!important;hyphens:manual;font-size:clamp(1.05rem,5vw,1.5rem)!important;line-height:1.05}
+
+/* v37 forms */
+.cday-detail{gap:14px}
+.entry{gap:8px}
+.entry textarea{min-height:72px;margin-top:2px}
+.entry .del{padding:6px 0;min-height:32px}
+.cday-detail .brow{padding-top:4px}
+#cformw:empty{display:none}
+.cform{gap:14px;border-top:1px solid var(--line);padding-top:16px}
+.cform h4{margin:0;font-size:1rem;font-weight:700}
+.cform label,.edf label,.scard label{gap:6px;font-size:.82rem;font-weight:600;color:var(--mute2)}
+.cform .row,.edf .row{gap:12px}
+.cform input,.cform select,.cform textarea,.entry textarea,.scard input,.scard textarea,.edf input,.edf select{min-height:48px;padding:12px 14px;border-radius:12px;line-height:1.3;-webkit-appearance:none;appearance:none;width:100%;max-width:100%;min-width:0;display:block}
+.cform textarea,.scard textarea{min-height:88px;resize:vertical}
+.cform input[type=time]{text-align:left}
+.cform input::-webkit-date-and-time-value{text-align:left}
+.cform select,.edf select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a2a2a2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:18px;padding-right:40px}
+.cform input:focus-visible,.cform select:focus-visible,.cform textarea:focus-visible,.entry textarea:focus-visible,.scard input:focus-visible,.scard textarea:focus-visible,.edf input:focus-visible,.edf select:focus-visible,.edf textarea:focus-visible{outline:2px solid var(--c-chest);outline-offset:0;border-color:transparent}
+.fact{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+.fact .cbtn,.cbtn{min-height:44px}
 </style>
 
 </head>
@@ -441,7 +454,7 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 72px)}
     <h1>Zab <span>Workouts</span></h1><a class="gear" href="#settings" aria-label="Settings"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></a>
     <p class="sub" id="hsub"></p>
   </header>
-  <nav class="tabbar" role="tablist" id="seg" aria-label="Sections"><button role="tab" data-m="w" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7v10M3 9.5v5M18 7v10M21 9.5v5M6 12h12"/></svg>Workouts</button><button role="tab" data-m="p" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>Plans</button><button role="tab" data-m="c" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>Calendar</button></nav>
+  <div class="seg tabs3" role="tablist" id="seg"><button role="tab" data-m="w" aria-selected="true">Workouts</button><button role="tab" data-m="p" aria-selected="false">Plans</button><button role="tab" data-m="c" aria-selected="false">Calendar</button></div>
   <div id="wmode">
   <div id="upn"></div>
   <div class="car" id="car" aria-label="Featured workouts"></div>
@@ -451,7 +464,7 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 72px)}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 36 · Oct 27, 2026</p>
+  <p class="ver">Version 37 · Oct 28, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -1734,9 +1747,10 @@ function renderLifts(el){const S=setsGet(),B=bodyGet().filter(b=>b.w).sort((a,b)
     out+=`<button class="lift" data-lift="${esc(n)}"><div class="lh"><b>${esc(n)}</b><span>Best ${fromKg(best)} ${u}</span></div>${spark(Object.entries(day).map(([k,v])=>[+new Date(k),v]))}${open?`<ul>${l.slice(-12).reverse().map(x=>`<li>${new Date(x.ts).toLocaleDateString([],{month:"short",day:"numeric"})} · ${fromKg(x.kg)} ${u} × ${x.r}</li>`).join("")}</ul>`:""}</button>`}
   el.innerHTML=out+"</div>";
   el.querySelectorAll("[data-lift]").forEach(b=>b.onclick=()=>{liftOpen=liftOpen===b.dataset.lift?null:b.dataset.lift;renderLifts(el)})}
+function openForm(el,title,inner){const br=el.querySelector(".cday-detail .brow");if(br)br.hidden=true;const w=el.querySelector("#cformw");w.innerHTML=`<div class="cform"><h4>${title}</h4>${inner}</div>`;w.querySelector("[data-cancel]").onclick=()=>{w.innerHTML="";if(br)br.hidden=false};const f=w.querySelector("input:not([type=time]),select");w.scrollIntoView({block:"nearest",behavior:reduceM?"auto":"smooth"})}
 function bodyHTML(k){const b=bodyGet().filter(x=>x.d===k);return b.map(x=>`<div class="entry"><span class="csrc">Body stats</span><span>${[x.w?x.w+" "+(x.u||cfg().units):"",x.bf?x.bf+"% body fat":"",x.waist?"Waist "+x.waist:""].filter(Boolean).join(" · ")}</span>${x.note?`<span class="em">${esc(x.note)}</span>`:""}<button class="del" data-bdel="${x.uid}">Remove</button></div>`).join("")}
 function bindBody(el){el.querySelectorAll("[data-bdel]").forEach(b=>b.onclick=()=>{tomb(b.dataset.bdel);LS.set("zabBody",bodyGet().filter(x=>x.uid!==b.dataset.bdel));dirty();renderCal()});
-  const bb=el.querySelector("#cbody");if(bb)bb.onclick=()=>{el.querySelector("#cformw").innerHTML=`<div class="cform"><div class="row"><label>Weight (${cfg().units})<input id="bW" type="number" inputmode="decimal"></label><label>Body fat %<input id="bF" type="number" inputmode="decimal"></label></div><label>Waist<input id="bWa" placeholder="optional"></label><label>Notes<textarea id="bN" rows="2"></textarea></label><button class="cbtn pri" id="bS">Save</button></div>`;
+  const bb=el.querySelector("#cbody");if(bb)bb.onclick=()=>{openForm(el,"Body stats",`<div class="row"><label>Weight (${cfg().units})<input id="bW" type="number" inputmode="decimal"></label><label>Body fat %<input id="bF" type="number" inputmode="decimal"></label></div><label>Waist<input id="bWa" placeholder="Optional"></label><label>Notes<textarea id="bN" rows="3"></textarea></label><div class="fact"><button class="cbtn" data-cancel>Cancel</button><button class="cbtn pri" id="bS">Save</button></div>`);
     el.querySelector("#bS").onclick=()=>{const a=bodyGet();a.push({uid:uidN(),d:calSel,w:parseFloat(el.querySelector("#bW").value)||0,u:cfg().units,bf:parseFloat(el.querySelector("#bF").value)||0,waist:el.querySelector("#bWa").value.trim(),note:el.querySelector("#bN").value.trim()});LS.set("zabBody",a);dirty();renderCal()}}}
 /* ---- backup & sync ---- */
 function exportAll(){return{app:"zab-workouts",v:1,at:new Date().toISOString(),log:logGet(),sets:setsGet(),body:bodyGet(),custom:customGet(),favs:favs(),del:LS.get("zabDel",[])}}
@@ -1884,7 +1898,7 @@ function renderCal(){
   el.querySelectorAll("textarea[data-u]").forEach(t=>t.onchange=()=>{const a=logGet(),e=a.find(x=>x.uid===t.dataset.u);if(e){e.notes=t.value;logSet(a)}});
   el.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(!confirm("Remove this workout?"))return;tomb(b.dataset.del);logSet(logGet().filter(x=>x.uid!==b.dataset.del));renderCal()});
   bindBody(el);
-  const ca=el.querySelector("#cadd");if(ca)ca.onclick=()=>{ca.hidden=true;el.querySelector("#cformw").innerHTML=`<div class="cform"><label>Workout<select id="fW"><option value="">Other…</option>${W.map(w=>`<option value="${w.id}">${esc(w.plan?w.meta[0]+" · "+w.day+" · "+w.name:w.name)}</option>`).join("")}</select></label><label id="fNl">Name<input id="fN" placeholder="e.g. Run, Pickleball"></label><div class="row"><label>Start time<input id="fT" type="time" value="07:00"></label><label>Minutes<input id="fD" type="number" inputmode="numeric" min="1" value="30"></label></div><label>Notes<textarea id="fO" rows="2"></textarea></label><button class="cbtn pri" id="fS">Save</button></div>`;
+  const ca=el.querySelector("#cadd");if(ca)ca.onclick=()=>{openForm(el,"Log a workout",`<label>Workout<select id="fW"><option value="">Other…</option>${W.map(w=>`<option value="${w.id}">${esc(w.plan?w.meta[0]+" · "+w.day+" · "+w.name:w.name)}</option>`).join("")}</select></label><label id="fNl">Name<input id="fN" placeholder="e.g. Run, Pickleball"></label><div class="row"><label>Start time<input id="fT" type="time" value="07:00"></label><label>Minutes<input id="fD" type="number" inputmode="numeric" min="1" value="30"></label></div><label>Notes<textarea id="fO" rows="3" placeholder="How did it feel?"></textarea></label><div class="fact"><button class="cbtn" data-cancel>Cancel</button><button class="cbtn pri" id="fS">Save</button></div>`);
     const sel=el.querySelector("#fW");sel.onchange=()=>{const w=W.find(x=>x.id===sel.value);el.querySelector("#fNl").hidden=!!w;if(w)el.querySelector("#fD").value=estMin(w)};
     el.querySelector("#fS").onclick=()=>{const w=W.find(x=>x.id===sel.value),nm=w?w.name:el.querySelector("#fN").value.trim()||"Workout",[hh,mm]=(el.querySelector("#fT").value||"07:00").split(":"),d=new Date(calSel+"T00:00");d.setHours(+hh,+mm);
       logAdd({id:w?w.id:"",name:nm,plan:w&&w.plan?w.meta[0]+" · "+w.day:"",ts:d.getTime(),dur:+el.querySelector("#fD").value||0,notes:el.querySelector("#fO").value,src:w?"app":"manual"});renderCal()}};
@@ -1923,6 +1937,19 @@ document.getElementById("sheet").addEventListener("click",e=>{
   const w=W.find(x=>x.id===cur);
   const li=e.target.closest("li.go"); if(li){const st=steps(w);const i=st.findIndex(s=>s.bi==li.dataset.b&&s.n===li.dataset.n);start(w,Math.max(0,i))}
 });
+
+/* swipe between tabs (and weeks/months on the calendar grid) */
+(function(){let sx=0,sy=0,st=0,tg=null;const ORDER=["w","p","c"],home=document.getElementById("home");
+  home.addEventListener("touchstart",e=>{if(e.touches.length!==1)return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;st=Date.now();tg=e.target},{passive:true});
+  home.addEventListener("touchend",e=>{if(!tg)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy,el=tg;tg=null;
+    if(Date.now()-st>700||Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.6)return;
+    if(el.closest(".car,.chips,input,textarea,select,.lift,[contenteditable]"))return;
+    const dir=dx<0?1:-1;
+    if(hmode==="c"&&el.closest("#cgrid,.chead,.cstats")){const btn=document.getElementById(dir>0?"cnext":"cprev");if(btn)btn.click();return}
+    const i=ORDER.indexOf(hmode)+dir;if(i<0||i>=ORDER.length)return;
+    hmode=ORDER[i];try{localStorage.setItem("zabMode",hmode)}catch(x){}renderHome();window.scrollTo(0,0);
+    if(!reduceM){const m=[document.getElementById("wmode"),document.getElementById("pmode"),document.getElementById("cmode")][i];m.animate([{transform:`translateX(${dir*40}px)`,opacity:0},{transform:"none",opacity:1}],{duration:220,easing:"cubic-bezier(.2,.8,.2,1)"})}
+  },{passive:true});})();
 setAccent(W[0]);renderHome();route(false);requestAnimationFrame(artLoop);bootSync();
 </script>
 
