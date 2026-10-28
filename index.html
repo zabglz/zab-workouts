@@ -479,7 +479,7 @@ details.sx>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2p
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 43 · Oct 28, 2026</p>
+  <p class="ver">Version 44 · Oct 28, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -1057,8 +1057,31 @@ breathe:{v:25,base:{tp:-2,g:[88,90,52,-78],a:[30,70,30,-10]},k:[{se:0},{se:.025,
 plankhold:{v:75,an:'hands',k:[PLK,{...PLK,se:.01}],d:1.5},
 stand:{v:30,k:[{a:[0,0,8]},{a:[0,0,9],se:.01}],d:1.5}
 };
+
+/* v44: dedicated motions for moves that were borrowing another animation */
+const seatBox=(X,f,y)=>{const c=[f.P[0],(y??f.P[1])-.1,f.P[2]];X.box(c,[0,0,.24],[0,.05,0],[.2,0,0],EC.pad,EC.padTop);X.seg([c[0],c[1]-.05,c[2]],[c[0],0,c[2]],.05,EC.frame,1)};
+Object.assign(DF,{
+ legcurl:{v:75,gnd:'fix',base:{y:.56,tp:-10,a:[10,40,22]},k:[{g:[90,80,5]},{g:[90,-8,5]}],d:[1.1,1],eq:(J,F,X)=>{DF.legext.eq(J,F,X)}},
+ legpress:{v:82,gnd:'fix',base:{y:.45,tp:-48,hp:12,a:[25,70,28]},k:[{g:[150,55,16]},{g:[100,100,16]}],d:[1.1,1],
+   eq:(J,F,X)=>{const f=F[0];X.box(add(f.P,[0,-.12,-.05]),[0,0,.26],[0,.05,0],[.22,0,0],EC.pad,EC.padTop);const ft=mid(J.ankL,J.ankR),n=nrm(sub(ft,mid(J.kneeL,J.kneeR)));X.box(add(ft,mul(n,.05)),mul(n,.02),[0,.22,0],[.3,0,0],EC.frame,EC.padTop)}},
+ pulldown:{v:30,gnd:'fix',base:{y:.5,tp:-10,hp:-12,g:[88,0,12]},k:[{a:[176,178,30]},{a:[-8,172,74,14]}],d:[1.1,1.1],
+   eq:(J,F,X)=>{seatBox(X,F[0]);const h=hm(J),ax=hax(J);X.seg(add(h,mul(ax,-.6)),add(h,mul(ax,.6)),.022,EC.steel);X.cable([h[0],2.6,h[2]],h)}},
+ seatedrow:{v:85,gnd:'fix',base:{y:.36,g:[78,72,10]},k:[{tp:24,a:[78,84,8]},{tp:-6,a:[-48,72,12,6]}],d:[1,1.1],
+   eq:(J,F,X)=>{seatBox(X,F[0],.36);const h=hm(J),ax=hax(J);X.seg(add(h,mul(ax,-.12)),add(h,mul(ax,.12)),.02,EC.steel);X.cable([h[0],.42,h[2]+1.7],h)}},
+ kickback:{v:80,an:'feet',base:{tp:58,hp:-20,g:[24,-14,9]},k:[{a:[-55,12,8]},{a:[-60,-62,8]}],d:[.9,1],eq:dbsE('rt')},
+ ohext:{v:30,an:'feet',k:[{hh:{c:[0,.66,.02],w:.06,p:[.35,1,.1]}},{hh:{c:[0,.16,-.2],w:.06,p:[.35,1,.2]}}],d:[1,1],eq:(J,F,X)=>X.db(hm(J),[0,1,0])},
+ dbfly:{v:55,base:{tp:-90,g:[78,2,12]},k:[{a:[180,180,8,6]},{a:[180,180,84,74]}],d:[1.1,1],eq:(J,F,X)=>{X.bench(F[0]);X.db(J.handL,nax(J,'L'));X.db(J.handR,nax(J,'R'))}},
+ hangraise:{v:70,gnd:'fix',an:'hands',k:[{y:1.62,a:[180,180,30],g:[0,0,7]},{y:1.62,a:[180,180,30],g:[100,-5,8]}],d:[1,1],eq:(J,F,X)=>X.hbar(F[0])},
+ hspu:{v:75,gnd:'fix',an:'hands',k:[{y:1.2,tp:180,a:[0,0,20],g:[180,180,6]},{y:.98,tp:180,a:[30,-20,48,12],g:[180,180,6]}],d:[1.1,1]},
+ straightarm:{v:80,an:'feet',base:{tp:22,hp:-10,g:[14,-6,10]},k:[{a:[112,112,12]},{a:[-6,-6,12]}],d:[1,1.1],eq:(J,F,X)=>{const h=hm(J),ax=hax(J);X.seg(add(h,mul(ax,-.25)),add(h,mul(ax,.25)),.022,EC.steel);X.cable([h[0],2.3,h[2]+.75],h)}},
+ pistol:{v:75,an:'ankR',k:[{r:[0,0,7],l:[40,40,6],a:[90,90,10]},{tp:40,r:[96,-32,10],l:[88,88,6],a:[90,90,10]}],d:[1.1,1.1]},
+ bike:{v:80,gnd:'fix',base:{y:.84,tp:22,a:[62,30,14]},k:[{l:[78,-12,6],r:[38,-42,6]},{l:[38,-42,6],r:[78,-12,6]}],d:.35,
+   eq:(J,F,X)=>{const f=F[0];seatBox(X,f,.8);const c=[f.P[0],.55,f.P[2]+.32];X.seg(c,[c[0],0,c[2]+.15],.05,EC.frame,1);X.seg([c[0],1.05,c[2]+.45],[c[0],.55,c[2]+.3],.04,EC.frame,1)}},
+ bbsnatch:{v:65,an:'feet',k:[{tp:35,hp:-20,g:[22,-12,10],a:[0,0,14]},{g:[0,0,10],pf:35,se:.06,a:[22,22,16]},{tp:8,g:[40,-36,12],a:[176,180,32]},{g:[0,0,10],a:[176,180,32]}],d:[.5,.3,.6,1],eq:bbE},
+ sumohp:{v:60,an:'feet',k:[{tp:50,hp:-25,g:[52,-18,32,28],a:[0,0,4]},{tp:4,g:[5,0,26,26],pf:20,a:[0,0,4]},{tp:4,g:[5,0,26,26],a:[0,0,82,-62]}],d:[.6,.45,1],eq:bbE}
+});
 const MAP=[
-[/^rest/,'stand'],[/sumo deadlift high pull|high pull/,'upright'],[/zercher|front (or|of) zercher/,'frontsquat'],[/barbell hang power snatch/,'clean'],[/hang power snatch/,'snatch'],[/sprint/,'sprinter'],[/incline fl(y|ies)/,'cablefly'],[/tricep pushdown/,'pushdown'],[/side lunge/,'sidelunge'],[/forward (static )?lunge|static lunge/,'bblunge'],[/rear fly/,'rearfly'],[/full deadlift/,'deadlift'],[/chin-?up/,'pullup'],[/skull ?crusher/,'dbskull'],[/pronated-grip row/,'dbrow'],[/single-leg deadlift/,'slrdl'],[/side plank dips/,'spdip'],[/side plank \+ rotation/,'sprot'],
+[/^rest/,'stand'],[/leg curl|hamstring curl/,'legcurl'],[/leg press/,'legpress'],[/straight arm/,'straightarm'],[/pull-?downs?|lat pull/,'pulldown'],[/seated row/,'seatedrow'],[/kickback/,'kickback'],[/hanging (leg|knee)/,'hangraise'],[/handstand push/,'hspu'],[/pistol/,'pistol'],[/overhead (bar )?extension|one arm dumbbell extension|^tricep extension/,'ohext'],[/^dumbbell fl(y|ies)|incline fl(y|ies)/,'dbfly'],[/cycle machine|easy spin|^cycle\b|bike/,'bike'],[/hang power snatch/,'bbsnatch'],[/sumo deadlift high pull/,'sumohp'],[/romanian|stiff-legged/,'kbrdl'],[/sumo deadlift high pull|high pull/,'upright'],[/zercher|front (or|of) zercher/,'frontsquat'],[/barbell hang power snatch/,'clean'],[/hang power snatch/,'snatch'],[/sprint/,'sprinter'],[/incline fl(y|ies)/,'cablefly'],[/tricep pushdown/,'pushdown'],[/side lunge/,'sidelunge'],[/forward (static )?lunge|static lunge/,'bblunge'],[/rear fly/,'rearfly'],[/full deadlift/,'deadlift'],[/chin-?up/,'pullup'],[/skull ?crusher/,'dbskull'],[/pronated-grip row/,'dbrow'],[/single-leg deadlift/,'slrdl'],[/side plank dips/,'spdip'],[/side plank \+ rotation/,'sprot'],
 [/flat bench press/,'bench'],[/^plank$/,'plankhold'],[/power clean/,'clean'],[/incline.*(press|bench)/,'incline'],[/shoulder press|seated dumbbell press|military press/,'military'],[/bench press|chest press|dumbbell press$|flat dumbbell press|hammer strength/,'bench'],
 [/^pull-?ups?\b|^pullups|wide grip pull|pull ?-?downs?|lat pull|muscle-ups|l-pull/,'pullup'],[/leg press|barbell squats?|^back squat/,'backsquat'],
 [/front squats/,'frontsquat'],[/^goblet|goblet squats/,'goblet'],[/russian twist/,'heeltaps'],[/hanging (leg|knee)/,'vsit'],[/v-ups/,'jackknife'],[/romanian|stiff-legged|rack deadlift|^deadlifts?/,'deadlift'],
@@ -1123,9 +1146,9 @@ for(const k in GRIP)if(DF[k])DF[k].grip=GRIP[k];
 function defFor(name){const n=name.toLowerCase();for(const[re,k]of MAP)if(re.test(n))return{key:k,d:eqSwap(k,compile(DF[k]),n),mirror:!!DF[k].mir&&/\(l\)|\(left\)/.test(n)};return{key:'stand',d:compile(DF.stand),mirror:false}}
 /* match the held equipment to what the exercise name says */
 const HELD=new Set(["db","dbs","bb","ez","kb","kbFloor","plate","cable","hbar"]);
-function wantEq(n){if(/kettlebell|\bkb\b/.test(n))return"kb";if(/ez-?bar/.test(n))return"ez";if(/dumbbell|\bdb\b/.test(n))return"db";
+function wantEq(n){if(/kettlebell|\bkb\b/.test(n))return"kb";if(/ez-?bar|overhead bar/.test(n))return"ez";if(/dumbbell|\bdb\b/.test(n))return"db";
   if(/cable|pull-?downs?|pushdown|lat pull/.test(n))return"cable";if(/\bplates?\b/.test(n)&&!/barbell/.test(n))return"plate";
-  if(/barbell|bar only|\bbb\b|military press|^front squats?$|^back squat/.test(n))return"bb";return""}
+  if(/barbell|bar only|\bbb\b|military press|^front squats?$|^back squat|stiff-legged|^romanian/.test(n))return"bb";return""}
 const HAS={};
 function hasEq(k){if(k in HAS)return HAS[k];const d=DF[k],s=new Set();if(d&&d.eq){const z=[0,1,0],J=new Proxy({},{get:()=>z}),X=new Proxy({},{get:(t,m)=>(...a)=>{s.add(m);return z}});for(let i=0;i<4;i++){try{d.eq(J,{up:[0,1,0],fw:[0,0,1],hr:[1,0,0]},X,i)}catch(e){}}}
   return HAS[k]=s.has("db")||s.has("dbs")?"db":s.has("kb")||s.has("kbFloor")?"kb":s.has("ez")?"ez":s.has("bb")?"bb":s.has("cable")?"cable":s.has("plate")?"plate":s.has("hbar")?"hbar":"none"}
