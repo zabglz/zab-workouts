@@ -318,6 +318,51 @@ button:active{transform:scale(.96);opacity:.85}
   .figwrap{width:min(50vw,calc(100vh - 175px));width:min(50vw,calc(100dvh - 175px))}
   .player.mini .figwrap{width:min(26vw,calc(100vh - 175px));width:min(26vw,calc(100dvh - 175px))}
   .views button{min-height:30px;padding:3px 10px}}
+
+/* calendar */
+.seg{grid-template-columns:1fr 1fr 1fr}
+.cal{display:flex;flex-direction:column;gap:16px}
+.chead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.chead h2{margin:0;font-size:1.35rem;font-weight:700}
+.cnav{display:flex;gap:6px}
+.cnav button,.cbtn{border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:999px;min-width:40px;min-height:40px;font:600 .9rem var(--body);padding:0 14px}
+.cbtn.pri{background:#fff;color:#111;border-color:#fff}
+.cstats{display:flex;gap:28px}
+.cstats small{display:block;color:var(--muted);font-size:.85rem}
+.cstats b{font-size:1.6rem;font-weight:700}
+.cview{display:flex;gap:8px;align-items:center}
+.cview .seg{grid-template-columns:1fr 1fr;flex:1;max-width:220px}
+.cgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr)) 34px;gap:10px 4px;align-items:center;justify-items:center}
+.cgrid .dow{color:var(--muted);font-size:.85rem;font-weight:600}
+.cday{position:relative;width:100%;max-width:44px;height:auto;aspect-ratio:1;border-radius:50%;border:0;background:#1d1d1d;color:var(--ink);font:500 .95rem var(--body);display:grid;place-items:center;padding:0}
+.cday.out{background:none;color:#555}
+.cday.today{box-shadow:inset 0 0 0 2px #555}
+.cday.has{background:#fff;color:#111}
+.cday.has svg{width:22px;height:22px}
+.cday.sel{outline:2px solid var(--c-chest);outline-offset:2px}
+.cday .more{position:absolute;top:-1px;right:-1px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--bg)}
+.cday.has .more{background:#fff}
+.strk{grid-column:8;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:2px solid #444}
+.strk.on{background:var(--c-chest);border-color:var(--c-chest)}
+.strk.on svg{width:16px;height:16px}
+.cday-detail{background:var(--sheet);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.cday-detail h3{margin:0;font-size:1.05rem}
+.entry{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:6px}
+.entry:first-of-type{border-top:0;padding-top:0}
+.entry .eh{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.entry .eh b{font-size:1rem}
+.entry .em{color:var(--muted);font-size:.88rem}
+.entry textarea,.cform input,.cform select,.cform textarea,.imp textarea{width:100%;background:var(--sheet2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:16px}
+.entry textarea{min-height:44px;resize:vertical}
+.entry .del{align-self:flex-start;background:none;border:0;color:#ff7a7a;font:500 .85rem var(--body);padding:4px 0}
+.cform{display:grid;gap:10px}
+.cform .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cform label{font-size:.82rem;color:var(--muted);display:grid;gap:4px}
+.csrc{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.imp{background:var(--sheet);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:10px}
+.imp p{margin:0;color:var(--muted);font-size:.9rem}
+.imp ol{margin:0;padding-left:20px;color:var(--muted);font-size:.9rem;display:grid;gap:4px}
+
 </style>
 
 </head>
@@ -328,14 +373,15 @@ button:active{transform:scale(.96);opacity:.85}
     <h1>Zab <span>Workouts</span></h1>
     <p class="sub" id="hsub"></p>
   </header>
-  <div class="seg" role="tablist" id="seg"><button role="tab" data-m="w" aria-selected="true">Workouts</button><button role="tab" data-m="p" aria-selected="false">Plans</button></div>
+  <div class="seg" role="tablist" id="seg"><button role="tab" data-m="w" aria-selected="true">Workouts</button><button role="tab" data-m="p" aria-selected="false">Plans</button><button role="tab" data-m="c" aria-selected="false">Calendar</button></div>
   <div id="wmode">
   <div class="chips" id="chips"></div>
   <div class="car" id="car" aria-label="Workouts"></div>
   <div class="libhead"><h2>Workout library</h2><span id="count"></span></div>
   <div class="grid" id="grid"></div>
   </div>
-  <p class="ver">Version 30 · Oct 27, 2026</p>
+  <div id="cmode" hidden><div class="cal" id="cal"></div></div>
+  <p class="ver">Version 31 · Oct 27, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span>5 plans</span></div>
@@ -509,7 +555,8 @@ const reduceM=matchMedia("(prefers-reduced-motion: reduce)").matches;
 function renderHome(){
   if(group==="plan")group="all";
   document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-selected",b.dataset.m===hmode));
-  document.getElementById("wmode").hidden=hmode!=="w";document.getElementById("pmode").hidden=hmode!=="p";
+  document.getElementById("wmode").hidden=hmode!=="w";document.getElementById("pmode").hidden=hmode!=="p";document.getElementById("cmode").hidden=hmode!=="c";
+  if(hmode==="c"){document.getElementById("hsub").textContent="Your training, day by day.";renderCal();return}
   const nw=W.length;
   document.getElementById("hsub").textContent=hmode==="w"?`${nw} workouts. Tap one to see the details.`:`${PLANS.length} training plans. Pick one to see every day.`;
   const car=document.getElementById("car"),pcar=document.getElementById("pcar");clearArts(car);clearArts(pcar);
@@ -1543,11 +1590,86 @@ function step(){
   paint();
 }
 async function start(w,from=0){
-  PS=steps(w);pi=from;running=true;elapsed=0;paintEl();libY=window.scrollY;document.querySelector(".wrap").hidden=true;player.hidden=false;window.scrollTo(0,0);
+  curRun=w;PS=steps(w);pi=from;running=true;elapsed=0;paintEl();libY=window.scrollY;document.querySelector(".wrap").hidden=true;player.hidden=false;window.scrollTo(0,0);
   beep(880,.12);show();clearInterval(tick);tick=setInterval(step,1000);
   keepAwake(true);
 }
+
+/* ===== calendar & log ===== */
+let curRun=null,calMode="w",calRef=new Date(),calSel=null;
+try{calMode=localStorage.getItem("zabCalMode")||"w"}catch(e){}
+function logGet(){try{return JSON.parse(localStorage.getItem("zabLog")||"[]")}catch(e){return[]}}
+function logSet(a){try{localStorage.setItem("zabLog",JSON.stringify(a))}catch(e){}}
+function logAdd(e){const a=logGet();e.uid=e.uid||(Date.now().toString(36)+Math.random().toString(36).slice(2,6));
+  if(e.src==="apple"&&a.some(x=>x.src==="apple"&&Math.abs(x.ts-e.ts)<60000&&x.name===e.name))return false;
+  a.push(e);logSet(a);return true}
+const dkey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const sod=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
+const monday=d=>{const x=sod(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const ICO={
+ lift:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M3 9.5v5M18 7v10M21 9.5v5M6 12h12"/></svg>',
+ run:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16c3 0 5-1 6-4l1-3 3 2 2 3h3a1 1 0 0 1 1 1v1H5a1 1 0 0 1-1-1z"/></svg>',
+ bike:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-7h5l3 7M10 9l3 7M13 6h3"/></svg>',
+ swim:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0M3 15c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0"/></svg>',
+ walk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M11 21l2-6-3-3 1-5 4 4h3M8 12l-2 3"/></svg>',
+ move:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>'};
+function icoFor(e){if(e.src!=="apple")return ICO.lift;const t=(e.name||"").toLowerCase();
+  if(/run|jog/.test(t))return ICO.run;if(/cycl|bik|spin/.test(t))return ICO.bike;if(/swim/.test(t))return ICO.swim;if(/walk|hik/.test(t))return ICO.walk;
+  if(/strength|weight|functional|core|hiit|cross/.test(t))return ICO.lift;return ICO.move}
+function byDay(){const m={};for(const e of logGet()){const k=dkey(new Date(e.ts));(m[k]=m[k]||[]).push(e)}for(const k in m)m[k].sort((a,b)=>a.ts-b.ts);return m}
+function streak(m){let n=0,w=monday(new Date());const has=w0=>{for(let i=0;i<7;i++)if(m[dkey(addD(w0,i))])return true;return false};
+  if(!has(w))w=addD(w,-7);while(has(w)){n++;w=addD(w,-7)}return n}
+const fmtT=ts=>new Date(ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+function renderCal(){
+  const m=byDay(),el=document.getElementById("cal"),today=dkey(new Date());
+  let start,rows;
+  if(calMode==="w"){start=monday(calRef);rows=1}
+  else{const f=new Date(calRef.getFullYear(),calRef.getMonth(),1);start=monday(f);const l=new Date(calRef.getFullYear(),calRef.getMonth()+1,0);rows=Math.ceil(((l-start)/864e5+1)/7)}
+  const title=calMode==="w"?`Week of ${start.toLocaleDateString([],{month:"short",day:"numeric"})}`:calRef.toLocaleDateString([],{month:"long",year:"numeric"});
+  let inRange=0;for(let i=0;i<rows*7;i++){const d=addD(start,i);if(calMode==="w"||d.getMonth()===calRef.getMonth())inRange+=(m[dkey(d)]||[]).length}
+  let g=`<div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div><div class="dow">S</div><div></div>`;
+  for(let r=0;r<rows;r++){let any=false;
+    for(let c=0;c<7;c++){const d=addD(start,r*7+c),k=dkey(d),es=m[k]||[],out=calMode==="m"&&d.getMonth()!==calRef.getMonth();if(es.length)any=true;
+      g+=`<button class="cday${out?" out":""}${es.length?" has":""}${k===today?" today":""}${k===calSel?" sel":""}" data-k="${k}" aria-label="${d.toDateString()}${es.length?`, ${es.length} workout${es.length>1?"s":""}`:""}">${es.length?icoFor(es[0]):d.getDate()}${es.length>1?'<i class="more"></i>':""}</button>`}
+    g+=`<div class="strk${any?" on":""}">${any?ICO.check:""}</div>`}
+  let det="";
+  if(calSel){const es=m[calSel]||[],d=new Date(calSel+"T12:00");
+    det=`<div class="cday-detail"><h3>${d.toLocaleDateString([],{weekday:"long",month:"long",day:"numeric"})}</h3>`+
+    (es.length?es.map(e=>`<div class="entry"><span class="csrc">${e.src==="apple"?"Apple Fitness":"Zab Workouts"}</span><div class="eh"><b>${esc(e.name)}</b><span class="em">${fmtT(e.ts)}</span></div><span class="em">${[e.plan,e.dur?e.dur+" min":"",e.kcal?Math.round(e.kcal)+" kcal":"",e.dist?e.dist:""].filter(Boolean).map(esc).join(" · ")}</span><textarea data-u="${e.uid}" placeholder="Add notes">${esc(e.notes||"")}</textarea><button class="del" data-del="${e.uid}">Remove</button></div>`).join(""):`<p class="em" style="margin:0">Nothing logged.</p>`)+
+    `<button class="cbtn" id="cadd">+ Log a workout</button><div id="cformw"></div></div>`}
+  el.innerHTML=`<div class="chead"><h2>${esc(title)}</h2><div class="cnav"><button id="cprev" aria-label="Previous">‹</button><button id="ctoday">Today</button><button id="cnext" aria-label="Next">›</button></div></div>
+   <div class="cstats"><div><small>Your streak</small><b>${streak(m)} week${streak(m)===1?"":"s"}</b></div><div><small>${calMode==="w"?"This week":"This month"}</small><b>${inRange}</b></div></div>
+   <div class="cview"><div class="seg" role="tablist" id="cseg"><button role="tab" data-v="w" aria-selected="${calMode==="w"}">Week</button><button role="tab" data-v="m" aria-selected="${calMode==="m"}">Month</button></div></div>
+   <div class="cgrid" id="cgrid">${g}</div>${det}
+   <div class="imp"><b>Apple Fitness</b><p>Bring in workouts from your iPhone with the “Zab Workouts Import” shortcut, or paste its output here.</p><textarea id="impT" rows="3" placeholder="Paste workouts here"></textarea><button class="cbtn" id="impB">Import</button><span class="em" id="impM"></span>
+   <details><summary class="em">Set up the shortcut</summary><ol><li>Open Shortcuts and create a new shortcut.</li><li>Add <b>Find Workouts</b>, sorted by Start Date, latest first, limit 50.</li><li>Add <b>Repeat with Each</b>. Inside, add <b>Text</b> with: Type | Start Date | Duration | Active Energy | Distance (one line each).</li><li>After the repeat, add <b>Combine Text</b> (New Lines), then <b>Copy to Clipboard</b>.</li><li>Run it, come back here and paste.</li></ol></details></div>`;
+  el.querySelectorAll("#cgrid .cday").forEach(b=>b.onclick=()=>{calSel=calSel===b.dataset.k?null:b.dataset.k;renderCal()});
+  el.querySelector("#cprev").onclick=()=>{calRef=calMode==="w"?addD(calRef,-7):new Date(calRef.getFullYear(),calRef.getMonth()-1,1);renderCal()};
+  el.querySelector("#cnext").onclick=()=>{calRef=calMode==="w"?addD(calRef,7):new Date(calRef.getFullYear(),calRef.getMonth()+1,1);renderCal()};
+  el.querySelector("#ctoday").onclick=()=>{calRef=new Date();calSel=dkey(calRef);renderCal()};
+  el.querySelector("#cseg").onclick=e=>{const b=e.target.closest("button");if(!b)return;calMode=b.dataset.v;try{localStorage.setItem("zabCalMode",calMode)}catch(x){}if(calSel)calRef=new Date(calSel+"T12:00");renderCal()};
+  el.querySelectorAll("textarea[data-u]").forEach(t=>t.onchange=()=>{const a=logGet(),e=a.find(x=>x.uid===t.dataset.u);if(e){e.notes=t.value;logSet(a)}});
+  el.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(!confirm("Remove this workout?"))return;logSet(logGet().filter(x=>x.uid!==b.dataset.del));renderCal()});
+  const ca=el.querySelector("#cadd");if(ca)ca.onclick=()=>{ca.hidden=true;el.querySelector("#cformw").innerHTML=`<div class="cform"><label>Workout<select id="fW"><option value="">Other…</option>${W.map(w=>`<option value="${w.id}">${esc(w.plan?w.meta[0]+" · "+w.day+" · "+w.name:w.name)}</option>`).join("")}</select></label><label id="fNl">Name<input id="fN" placeholder="e.g. Run, Pickleball"></label><div class="row"><label>Start time<input id="fT" type="time" value="07:00"></label><label>Minutes<input id="fD" type="number" inputmode="numeric" min="1" value="30"></label></div><label>Notes<textarea id="fO" rows="2"></textarea></label><button class="cbtn pri" id="fS">Save</button></div>`;
+    const sel=el.querySelector("#fW");sel.onchange=()=>{const w=W.find(x=>x.id===sel.value);el.querySelector("#fNl").hidden=!!w;if(w)el.querySelector("#fD").value=estMin(w)};
+    el.querySelector("#fS").onclick=()=>{const w=W.find(x=>x.id===sel.value),nm=w?w.name:el.querySelector("#fN").value.trim()||"Workout",[hh,mm]=(el.querySelector("#fT").value||"07:00").split(":"),d=new Date(calSel+"T00:00");d.setHours(+hh,+mm);
+      logAdd({id:w?w.id:"",name:nm,plan:w&&w.plan?w.meta[0]+" · "+w.day:"",ts:d.getTime(),dur:+el.querySelector("#fD").value||0,notes:el.querySelector("#fO").value,src:w?"app":"manual"});renderCal()}};
+  el.querySelector("#impB").onclick=()=>{const n=importText(el.querySelector("#impT").value);el.querySelector("#impM").textContent=n<0?"Couldn’t read that. Check the shortcut format.":`Imported ${n} workout${n===1?"":"s"}.`;if(n>0)setTimeout(renderCal,900)};
+}
+function parseDur(s){s=String(s||"").trim();let m;if((m=/^(\d+):(\d\d)(?::(\d\d))?$/.exec(s)))return m[3]!==undefined?+m[1]*60+ +m[2]:+m[1];
+  let t=0;if((m=/(\d+(?:\.\d+)?)\s*h/i.exec(s)))t+=+m[1]*60;if((m=/(\d+(?:\.\d+)?)\s*m(?!i)/i.exec(s)))t+=+m[1];if((m=/(\d+(?:\.\d+)?)\s*s/i.exec(s))&&!t)t+=+m[1]/60;
+  if(!t&&/^\d+(\.\d+)?$/.test(s))t=+s>600?+s/60:+s;return Math.round(t)}
+function importText(txt){txt=(txt||"").trim();if(!txt)return -1;let n=0,items=[];
+  try{const j=JSON.parse(txt);items=(Array.isArray(j)?j:[j]).map(o=>[o.type||o.name,o.start||o.startDate,o.duration||o.dur,o.energy||o.kcal,o.distance])}catch(e){
+    items=txt.split(/\n+/).map(l=>l.split("|").map(s=>s.trim())).filter(p=>p.length>=2)}
+  for(const [ty,st,du,en,di] of items){const d=new Date(String(st).replace(" at ", " "));if(isNaN(d))continue;
+    if(logAdd({id:"",name:ty||"Workout",ts:d.getTime(),dur:parseDur(du),kcal:parseFloat(en)||0,dist:di||"",src:"apple"}))n++}
+  return items.length?n:-1}
+(function(){const q=new URLSearchParams(location.search).get("import");if(q){try{importText(decodeURIComponent(q))}catch(e){}history.replaceState(null,"",location.pathname+location.hash);hmode="c"}})();
 function finish(){
+  if(curRun&&elapsed>=60)logAdd({id:curRun.id,name:curRun.name,plan:curRun.plan?curRun.meta[0]+" · "+curRun.day:"",ts:Date.now()-elapsed*1000,dur:Math.round(elapsed/60),src:"app"});curRun=null;
   document.getElementById("pwhere").textContent="Finished";
   document.getElementById("pname").textContent="Workout complete";document.getElementById("pname").className="pname";
   document.getElementById("pclock").textContent="✓";document.getElementById("pclock").className="clock";
