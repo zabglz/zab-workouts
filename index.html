@@ -392,7 +392,7 @@ details.imp[open]{gap:10px}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 33 · Oct 27, 2026</p>
+  <p class="ver">Version 34 · Oct 27, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span>5 plans</span></div>
@@ -566,7 +566,7 @@ const reduceM=matchMedia("(prefers-reduced-motion: reduce)").matches;
 function renderHome(){
   if(group==="plan")group="all";
   document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-selected",b.dataset.m===hmode));
-  document.getElementById("wmode").hidden=hmode!=="w";document.getElementById("pmode").hidden=hmode!=="p";document.getElementById("cmode").hidden=hmode!=="c";
+  document.getElementById("wmode").hidden=hmode!=="w";document.getElementById("pmode").hidden=hmode!=="p";document.getElementById("cmode").hidden=hmode!=="c";document.querySelector(".ver").hidden=hmode!=="c";
   if(hmode==="c"){document.getElementById("hsub").textContent="Your training, day by day.";renderCal();return}
   const nw=W.length;
   document.getElementById("hsub").textContent=hmode==="w"?`${nw} workouts. Tap one to see the details.`:`${PLANS.length} training plans. Pick one to see every day.`;
