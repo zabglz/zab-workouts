@@ -492,6 +492,30 @@ details.sx>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2p
   .player.mini .infocol{display:flex}
 }
 @media (prefers-reduced-motion:reduce){.pup li{transition:none}}
+
+/* v49 landscape: left half toggles animation <-> list, right half is the current step */
+.lswap{display:none}
+@media (orientation:landscape) and (min-aspect-ratio:5/4){
+  .player,.player.mini{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"top top" "prog prog" "left info" "left ctrl";column-gap:28px}
+  .figcol,.plw{grid-area:left;min-height:0}
+  .player:not(.mini) .plw{display:none}
+  .player.mini .figcol{display:none}
+  .player:not(.mini) .figwrap,.player.mini .figwrap{width:min(100%,calc(100vh - 150px));width:min(100%,calc(100dvh - 150px))}
+  .player:not(.mini) .views{display:flex}
+  .plw{flex-direction:column;align-items:stretch;gap:8px}
+  .plw::after{display:none}
+  .player.mini .pup{width:100%;flex:1;min-height:0;max-height:none;padding-bottom:8px}
+  .player.mini .pup li{padding:12px 4px;font-size:1.05rem}
+  .player.mini .pup li.cur{padding:12px 12px}
+  .player.mini .lswap{display:inline-flex;align-self:flex-start;align-items:center;gap:8px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:999px;min-height:40px;padding:0 14px;font:600 .85rem var(--body)}
+  .lswap:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .infocol,.player.mini .infocol{grid-area:info;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:8px;min-height:0}
+  .player .psub,.player.mini .psub{display:block}
+  .player .pname,.player.mini .pname{font-size:clamp(1.6rem,8vh,3.2rem)}
+  .player .clock,.player.mini .clock{font-size:clamp(3.4rem,22vh,8rem)}
+  .player .clock.reps,.player.mini .clock.reps{font-size:clamp(2.6rem,15vh,5.5rem)}
+  .ctrl{grid-area:ctrl}
+}
 </style>
 
 </head>
@@ -512,7 +536,7 @@ details.sx>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2p
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 48 · Nov 6, 2026</p>
+  <p class="ver">Version 49 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -550,7 +574,7 @@ details.sx>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2p
     <div class="pw" id="pw" hidden></div>
     <div class="next" id="pnext"></div>
   </div>
-  <div class="plw" id="plw"><ol class="pup" id="pup" aria-label="Workout steps"></ol></div>
+  <div class="plw" id="plw"><button class="lswap" id="lswap" aria-label="Show animation"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><path d="M12 8v6M8 21l4-7 4 7M7 11h10"/></svg>Animation</button><ol class="pup" id="pup" aria-label="Workout steps"></ol></div>
   <div class="ctrl">
     <button id="pprev">Back</button>
     <button class="main" id="pmain">Pause</button>
@@ -1763,6 +1787,7 @@ function show(){
 function renderUp(){let out="",lab=null;for(let i=pi;i<PS.length;i++){const x=PS[i];{const g=(x.label||"").replace(/\s*·\s*set\s*\d+\s*\/\s*\d+\s*$/i,"");if(!x.rest&&g&&g!==lab){lab=g;out+=`<li class="gh">${esc(g)}</li>`}}
   out+=`<li class="${x.rest?"r":""}${i===pi?" cur":""}" data-i="${i}"><b>${esc(x.n)}</b><span>${x.reps?esc(x.reps):fmt(x.sec)}</span></li>`}
   return out+`<li class="gh">Finish</li>`}
+document.getElementById("lswap").addEventListener("click",()=>document.getElementById("fmin").click());
 document.getElementById("pup").addEventListener("click",e=>{const li=e.target.closest("li[data-i]");if(!li)return;const i=+li.dataset.i;if(i===pi)return;pi=i;beep(660,.08);show()});
 function paint(){
   const s=PS[pi],c=document.getElementById("pclock"),m=document.getElementById("pmain");
