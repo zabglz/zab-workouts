@@ -459,6 +459,39 @@ details.sx>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2p
 .sbody{display:grid;gap:10px;padding:0 16px 16px}
 @media (prefers-reduced-motion:reduce){details.sx>summary::after{transition:none}}
 .pday.last{position:relative}.pday.last::after{content:"";position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:var(--ink);border:2px solid var(--bg)}
+
+/* v48 player list */
+.player{grid-template-rows:auto auto minmax(0,1.6fr) auto minmax(0,.8fr) auto;grid-template-areas:"top" "prog" "fig" "info" "list" "ctrl"}
+.player.mini{grid-template-rows:auto auto auto auto minmax(0,1fr) auto}
+.next{display:none!important}
+.player:not(.mini) .figwrap{width:min(100%,31vh);width:min(100%,31dvh)}
+.figcol{overflow:hidden}
+.plw{grid-area:list;min-height:0;display:flex;justify-content:center;position:relative}
+.plw::after{content:"";position:absolute;left:0;right:0;bottom:0;height:28px;background:linear-gradient(transparent,var(--bg));pointer-events:none}
+.pup,.player.mini .pup{display:block;margin:0;width:min(100%,560px);max-height:100%;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:24px;scroll-padding-top:0}
+.pup li{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease}
+.pup li.gh{display:block;cursor:default;border:0;padding:14px 2px 4px;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.pup li.cur{background:var(--sheet);border-radius:10px;border-bottom-color:transparent;padding-left:10px;padding-right:10px}
+.pup li.cur b{color:var(--ink);font-weight:700}
+.pup li.cur span{color:var(--accent)}
+/* big animation: list stays quiet */
+.player:not(.mini) .pup li{padding:7px 2px;font-size:.85rem}
+.player:not(.mini) .pup li.cur{padding:7px 10px}
+.player:not(.mini) .pup li b{font-weight:500;color:var(--muted)}
+.player:not(.mini) .pup li.cur b{color:var(--ink)}
+/* small animation: list leads */
+.player.mini .pup li{padding:14px 4px;font-size:1.12rem}
+.player.mini .pup li.cur{padding:14px 12px}
+.player.mini .pup li span{font-size:1rem}
+.player.mini .pup li.gh{padding:18px 4px 6px;font-size:.78rem}
+.player.mini .pname{font-size:clamp(1.8rem,7vw,3rem)}
+.player.mini .clock{font-size:clamp(3.4rem,17vw,6.5rem)}
+.player.mini .clock.reps{font-size:clamp(2.4rem,11vw,4.5rem)}
+@media (orientation:landscape) and (min-aspect-ratio:5/4){
+  .player,.player.mini{grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto auto minmax(0,1fr) auto;grid-template-areas:"top top" "prog prog" "fig info" "fig list" "fig ctrl"}
+  .player.mini .infocol{display:flex}
+}
+@media (prefers-reduced-motion:reduce){.pup li{transition:none}}
 </style>
 
 </head>
@@ -479,7 +512,7 @@ details.sx>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2p
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 47 · Nov 5, 2026</p>
+  <p class="ver">Version 48 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -516,8 +549,8 @@ details.sx>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2p
     <div class="clock" id="pclock"></div>
     <div class="pw" id="pw" hidden></div>
     <div class="next" id="pnext"></div>
-    <ol class="pup" id="pup"></ol>
   </div>
+  <div class="plw" id="plw"><ol class="pup" id="pup" aria-label="Workout steps"></ol></div>
   <div class="ctrl">
     <button id="pprev">Back</button>
     <button class="main" id="pmain">Pause</button>
@@ -1723,10 +1756,14 @@ function show(){
   document.getElementById("pnext").textContent=s.sub?s.sub:nx?`Next: ${nx.n}${nx.reps?` · ${nx.reps}`:` · ${fmt(nx.sec)}`}`:"Last one";
   document.getElementById("pbar").style.width=`${pi/PS.length*100}%`;
   document.getElementById("psub").textContent=s.label;
-  document.getElementById("pup").innerHTML=PS.slice(pi+1,pi+5).map(x=>`<li class="${x.rest?"r":""}"><b>${esc(x.n)}</b><span>${x.reps?esc(x.reps):fmt(x.sec)}</span></li>`).join("")||`<li><b>Finish</b><span></span></li>`;
+  document.getElementById("pup").innerHTML=renderUp();{const ul=document.getElementById("pup"),cu=ul.querySelector(".cur");if(cu)ul.scrollTo({top:Math.max(0,cu.offsetTop-ul.offsetTop-(cu.previousElementSibling&&cu.previousElementSibling.classList.contains("gh")?cu.previousElementSibling.offsetHeight:0)),behavior:reduceM?"auto":"smooth"})}
   paint();renderPW(s);
   {const bl=s.sub&&curRun?curRun.blocks[s.bi]:null,vm=document.getElementById("vmove");MV=bl?[...new Set(bl.i.map(x=>x[0]).filter(n=>!/^rest/i.test(n)))]:[];mvi=0;vm.hidden=MV.length<2;if(MV.length>1){vm.textContent=`Move 1/${MV.length}`;setFig(MV[0],MV[0])}}
 }
+function renderUp(){let out="",lab=null;for(let i=pi;i<PS.length;i++){const x=PS[i];{const g=(x.label||"").replace(/\s*·\s*set\s*\d+\s*\/\s*\d+\s*$/i,"");if(!x.rest&&g&&g!==lab){lab=g;out+=`<li class="gh">${esc(g)}</li>`}}
+  out+=`<li class="${x.rest?"r":""}${i===pi?" cur":""}" data-i="${i}"><b>${esc(x.n)}</b><span>${x.reps?esc(x.reps):fmt(x.sec)}</span></li>`}
+  return out+`<li class="gh">Finish</li>`}
+document.getElementById("pup").addEventListener("click",e=>{const li=e.target.closest("li[data-i]");if(!li)return;const i=+li.dataset.i;if(i===pi)return;pi=i;beep(660,.08);show()});
 function paint(){
   const s=PS[pi],c=document.getElementById("pclock"),m=document.getElementById("pmain");
   if(s.reps){c.textContent=s.reps;c.className="clock reps";m.textContent="Done ✓"}
