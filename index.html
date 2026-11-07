@@ -648,6 +648,11 @@ header{margin-bottom:6px}
 .libhead .lcount,#pmode .libhead span,.plv .libhead span{color:var(--mute2)!important}
 #pcount{color:var(--mute2)!important;font-family:var(--body)!important;font-size:.85rem!important;white-space:nowrap}
 .dhead .dn{display:none!important}.dhead{grid-template-columns:minmax(0,1fr) auto!important}
+
+/* v53 landscape safe area: clear the Dynamic Island on either side */
+@media (orientation:landscape) and (pointer:coarse){
+  .player{padding-left:max(52px,calc(env(safe-area-inset-left,0px) + 12px))!important;padding-right:max(52px,calc(env(safe-area-inset-right,0px) + 12px))!important;padding-top:max(14px,env(safe-area-inset-top,0px))!important;padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
+}
 </style>
 
 </head>
@@ -668,7 +673,7 @@ header{margin-bottom:6px}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 52 · Nov 6, 2026</p>
+  <p class="ver">Version 53 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
