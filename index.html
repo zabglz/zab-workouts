@@ -653,6 +653,11 @@ header{margin-bottom:6px}
 @media (orientation:landscape) and (pointer:coarse){
   .player{padding-left:max(52px,calc(env(safe-area-inset-left,0px) + 12px))!important;padding-right:max(52px,calc(env(safe-area-inset-right,0px) + 12px))!important;padding-top:max(14px,env(safe-area-inset-top,0px))!important;padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
 }
+
+/* v54 no colored edges anywhere; color shows as a dot */
+.sheet,.plan,.dsec,.pday,.dcard,.upnext,.gcard,.card,.cday-detail,.scard{border-left:0!important;border-top:0!important}
+.plan .ph>b::before{content:"";display:inline-block;width:.55em;height:.55em;border-radius:50%;background:var(--pc,var(--c-plan));margin-right:.35em;vertical-align:.12em}
+.dcard small::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--dc);margin-right:7px;vertical-align:1px}
 </style>
 
 </head>
@@ -673,7 +678,7 @@ header{margin-bottom:6px}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 53 · Nov 6, 2026</p>
+  <p class="ver">Version 54 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
