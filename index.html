@@ -579,6 +579,39 @@ details.sx>summary h3{font-size:1.05rem;font-weight:700;letter-spacing:-.01em}
 .swatches i{width:30px;height:30px;border-radius:50%;display:block}
 .swatches button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.gcard,.card{transition:none}.gcard:active,.card:active{transform:none}}
+
+/* v51 spacing & type rhythm */
+h1{line-height:.92!important;letter-spacing:.005em!important;display:flex;flex-direction:column;gap:.04em}
+h1 span{display:block}
+header{margin-bottom:6px}
+.sub,#hsub{margin-top:14px!important}
+#home>.seg,#seg{margin:22px 0 6px}
+.libhead h2,.chead h2,.pgrp,#settings h1,#editor h1,.upnext b,.quote p,.cstats b{line-height:1!important;letter-spacing:.01em!important}
+.card h2,.card h3,.card .cname,.gcard b,.dhead h1,#dname,#pvname,.pv h1,.pname,.dayrow b,.pdtitle{line-height:1!important;letter-spacing:.01em!important}
+.gcard b{margin-top:2px}
+.gcard{gap:6px}
+.libhead{margin-top:36px!important;margin-bottom:6px}
+.libhead .lcount,.libhead span{white-space:nowrap;flex:none}
+.libhead h2{min-width:0}
+#wmode,#pmode{display:flex;flex-direction:column;gap:18px}
+#wmode>*,#pmode>*{margin-top:0}
+#upn:empty{display:none}
+.upnext{gap:6px!important;padding:20px!important}
+.upnext b{font-size:1.75rem;margin:2px 0}
+.upnext em{margin-top:10px;padding-top:10px}
+.lfilt{gap:14px!important}
+.pgrp{margin:22px 0 12px!important}
+/* calendar */
+.chead{margin-top:8px}
+.cstats{margin:4px 0}
+.cstats small{margin-bottom:4px}
+.cday-detail{gap:16px}
+/* player */
+.infocol{gap:10px!important}
+.pname{font-size:clamp(1.8rem,7.5vw,2.8rem)!important;max-width:100%}
+.player.mini .pname{font-size:clamp(1.6rem,6.5vw,2.4rem)!important}
+.psub{margin-bottom:2px}
+.clock.reps{margin-top:2px}
 </style>
 
 </head>
@@ -599,7 +632,7 @@ details.sx>summary h3{font-size:1.05rem;font-weight:700;letter-spacing:-.01em}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 50 · Nov 6, 2026</p>
+  <p class="ver">Version 51 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
