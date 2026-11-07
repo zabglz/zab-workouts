@@ -650,7 +650,7 @@ header{margin-bottom:6px}
 .dhead .dn{display:none!important}.dhead{grid-template-columns:minmax(0,1fr) auto!important}
 
 /* v53 landscape safe area: clear the Dynamic Island on either side */
-@media (orientation:landscape) and (pointer:coarse){
+@media (orientation:landscape) and (pointer:coarse) and (min-aspect-ratio:5/4){
   .player{padding-left:max(52px,calc(env(safe-area-inset-left,0px) + 12px))!important;padding-right:max(52px,calc(env(safe-area-inset-right,0px) + 12px))!important;padding-top:max(14px,env(safe-area-inset-top,0px))!important;padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
 }
 
@@ -747,6 +747,7 @@ body.hasbg .gear{border-radius:50%}
 .vtog button:focus-visible{outline:2px solid #fff;outline-offset:-2px}
 @media (prefers-reduced-motion:reduce){.vthumb,.vtog button{transition:none}}
 @media (orientation:portrait),(max-aspect-ratio:5/4){.ptop .where{visibility:hidden}}
+@media (orientation:portrait){.player{padding-left:max(16px,env(safe-area-inset-left,0px))!important;padding-right:max(16px,env(safe-area-inset-right,0px))!important}}
 </style>
 
 </head>
@@ -768,7 +769,7 @@ body.hasbg .gear{border-radius:50%}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 60 · Nov 6, 2026</p>
+  <p class="ver">Version 61 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
