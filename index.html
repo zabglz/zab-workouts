@@ -658,6 +658,19 @@ header{margin-bottom:6px}
 .sheet,.plan,.dsec,.pday,.dcard,.upnext,.gcard,.card,.cday-detail,.scard{border-left:0!important;border-top:0!important}
 .plan .ph>b::before{content:"";display:inline-block;width:.55em;height:.55em;border-radius:50%;background:var(--pc,var(--c-plan));margin-right:.35em;vertical-align:.12em}
 .dcard small::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--dc);margin-right:7px;vertical-align:1px}
+
+/* v55 liquid glass: dark glass panels lit by a color glow from the top-left corner */
+.plan,.gcard,.upnext,.dsec,.scard,.cday-detail,.stats,.lift{--gc:rgba(255,255,255,.0);position:relative;isolation:isolate;
+ background:radial-gradient(140% 110% at 0% 0%,color-mix(in srgb,var(--gc) 42%,transparent) 0%,color-mix(in srgb,var(--gc) 10%,transparent) 38%,transparent 62%),linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02) 60%),#0c0c0e!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 1px rgba(255,255,255,.07),0 10px 30px rgba(0,0,0,.45)!important}
+.plan{--gc:var(--pc,var(--c-plan))}
+.gcard{--gc:var(--c)}
+.upnext{--gc:var(--brand)}
+.dsec{--gc:var(--dc)}
+/* the color now lives in the glow, so drop the dots */
+.plan .ph>b::before,.dcard small::before{display:none!important}
+.gcard small i{display:none}
+@media (prefers-reduced-transparency:reduce){.plan,.gcard,.upnext,.dsec,.scard,.cday-detail,.stats,.lift{background:var(--cloud)!important}}
 </style>
 
 </head>
@@ -678,7 +691,7 @@ header{margin-bottom:6px}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 54 · Nov 6, 2026</p>
+  <p class="ver">Version 55 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
