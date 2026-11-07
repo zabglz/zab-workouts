@@ -735,6 +735,18 @@ body.hasbg .gear{border-radius:50%}
 @media (prefers-reduced-motion:reduce){.clock.pop{animation:none}.ringw .rf{transition:none}}
 @media (orientation:landscape) and (min-aspect-ratio:5/4){.ringw.on{width:min(30vw,46vh);width:min(30vw,46dvh)}}
 .car .card h3{font-size:clamp(1.4rem,11cqw,2rem)!important;line-height:.95!important;overflow-wrap:anywhere}
+
+/* v60 one glass view toggle */
+.fmin,.lswap,.player.mini .lswap{display:none!important}
+.ptop{gap:10px}.ptop .where{flex:1}
+.vtog{position:relative;display:grid;grid-template-columns:1fr 1fr;flex:none;width:104px;height:44px;padding:4px;border-radius:16px;background:rgba(255,255,255,.08);-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 1px rgba(255,255,255,.08)}
+.vtog button{position:relative;z-index:1;border:0;background:none;color:var(--mute2);display:grid;place-items:center;border-radius:12px;padding:0;transition:color .25s ease}
+.vtog button[aria-selected="true"]{color:#fff}
+.vthumb{position:absolute;top:4px;left:4px;width:calc(50% - 4px);height:calc(100% - 8px);border-radius:12px;background:rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 0 0 1px rgba(255,255,255,.12),0 4px 14px rgba(0,0,0,.35);transition:transform .35s cubic-bezier(.3,1.3,.4,1)}
+.vtog.list .vthumb{transform:translateX(100%)}
+.vtog button:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+@media (prefers-reduced-motion:reduce){.vthumb,.vtog button{transition:none}}
+@media (orientation:portrait),(max-aspect-ratio:5/4){.ptop .where{visibility:hidden}}
 </style>
 
 </head>
@@ -756,7 +768,7 @@ body.hasbg .gear{border-radius:50%}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 59 · Nov 6, 2026</p>
+  <p class="ver">Version 60 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -781,7 +793,7 @@ body.hasbg .gear{border-radius:50%}
  </section>
 </div>
 <div class="player" id="player" hidden>
-  <div class="ptop"><span class="where" id="pwhere"></span><div class="pright"><span class="elapsed" id="pel" title="Total workout time"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2h5"/></svg><b id="pelT">0:00</b></span><button class="x" id="pclose" aria-label="Exit workout" title="Exit workout"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+  <div class="ptop"><span class="where" id="pwhere"></span><div class="vtog" id="vtog" role="tablist" aria-label="View"><i class="vthumb"></i><button role="tab" data-t="fig" aria-label="Animation"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="2"/><path d="M12 7.5v6.5M8 21l4-7 4 7M6.5 10.5h11"/></svg></button><button role="tab" data-t="list" aria-label="Workout list"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg></button></div><div class="pright"><span class="elapsed" id="pel" title="Total workout time"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2h5"/></svg><b id="pelT">0:00</b></span><button class="x" id="pclose" aria-label="Exit workout" title="Exit workout"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
   <div class="prog"><i id="pbar"></i></div>
   <div class="figcol">
     <div class="figwrap"><canvas id="fig" width="600" height="600" aria-label="Animated demo of the current exercise. Drag to rotate."></canvas><span class="ftag" id="ftag" hidden></span><span class="fhint">Drag to rotate</span><span class="fmus" id="fmus" hidden></span><button class="fmin" id="fmin" aria-label="Shrink illustration" title="Shrink illustration"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path class="i-shrink" d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/><path class="i-grow" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button></div>
@@ -2018,6 +2030,9 @@ function renderUp(){let out="",lab=null;for(let i=pi;i<PS.length;i++){const x=PS
   out+=`<li class="${x.rest?"r":""}${i===pi?" cur":""}" data-i="${i}"><b>${esc(x.n)}</b><span>${x.reps?esc(x.reps):fmt(x.sec)}</span></li>`}
   return out+`<li class="gh">Finish</li>`}
 document.getElementById("lswap").addEventListener("click",()=>document.getElementById("fmin").click());
+function syncTog(){const m=document.getElementById("player").classList.contains("mini"),t=document.getElementById("vtog");t.classList.toggle("list",m);t.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",String((b.dataset.t==="list")===m)))}
+document.getElementById("vtog").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const m=document.getElementById("player").classList.contains("mini");if((b.dataset.t==="list")!==m)document.getElementById("fmin").click();syncTog()});
+new MutationObserver(syncTog).observe(document.getElementById("player"),{attributes:true,attributeFilter:["class"]});syncTog();
 document.getElementById("pup").addEventListener("click",e=>{const li=e.target.closest("li[data-i]");if(!li)return;const i=+li.dataset.i;if(i===pi)return;pi=i;beep(660,.08);show()});
 function paint(){
   const s=PS[pi],c=document.getElementById("pclock"),m=document.getElementById("pmain");
