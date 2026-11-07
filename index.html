@@ -748,6 +748,25 @@ body.hasbg .gear{border-radius:50%}
 @media (prefers-reduced-motion:reduce){.vthumb,.vtog button{transition:none}}
 @media (orientation:portrait),(max-aspect-ratio:5/4){.ptop .where{visibility:hidden}}
 @media (orientation:portrait){.player{padding-left:max(16px,env(safe-area-inset-left,0px))!important;padding-right:max(16px,env(safe-area-inset-right,0px))!important}}
+
+/* v62 player spacing */
+@media (orientation:portrait),(max-aspect-ratio:5/4){.ptop .where{display:none}.ptop{justify-content:flex-start}.ptop .vtog{margin-right:auto}}
+@media (orientation:landscape) and (min-aspect-ratio:5/4){
+  .infocol,.player.mini .infocol{justify-content:center;gap:6px!important;overflow:hidden;padding-top:6px}
+  .ringw.on,.player.mini .ringw.on{width:min(26vw,38vh);width:min(26vw,38dvh)}
+  .ringw.on .clock{font-size:clamp(2rem,11vh,3.6rem)!important}
+  .player .pname{font-size:clamp(1.4rem,7vh,2.6rem)!important}
+  .prnx{margin-top:0}.prnx b{font-size:clamp(1.1rem,5.5vh,1.7rem)}
+  .ctrl{align-self:end}
+}
+@media (orientation:landscape) and (min-aspect-ratio:5/4){
+  .player .psub,.player.mini .psub{display:none!important}
+  .ringw.on,.player.mini .ringw.on{width:min(24vw,32vh);width:min(24vw,32dvh)}
+  .player .pname.rest{font-size:clamp(1.1rem,6vh,1.8rem)!important}
+  .prnx{display:flex!important;align-items:baseline;gap:8px;flex-wrap:wrap;justify-content:center}
+  .prnx[hidden]{display:none!important}
+  .ctrl{margin-top:8px}
+}
 </style>
 
 </head>
@@ -769,7 +788,7 @@ body.hasbg .gear{border-radius:50%}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 61 · Nov 6, 2026</p>
+  <p class="ver">Version 62 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
