@@ -797,7 +797,7 @@ body.hasbg .gear{border-radius:50%}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 63 · Nov 6, 2026</p>
+  <p class="ver">Version 64 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -1001,10 +1001,10 @@ document.getElementById("pcar").addEventListener("click",e=>{const c=e.target.cl
 const BGS=[["none","None"],["gym1","Warm lights"],["gym2","Rack & bikes"],["gym3","Mezzanine"],["gym4","Battle ropes"],["gym5","Barbell"],["gym6","Neon hall"]];
 function bgKey(){try{const c=JSON.parse(localStorage.getItem("zabCfg")||"{}");return c.bg||"gym1"}catch(e){return"gym1"}}
 function applyBg(){const k=bgKey(),el=document.getElementById("bgl");document.body.classList.toggle("hasbg",k!=="none");if(el)el.style.backgroundImage=k==="none"?"none":`url(bg/${k}.jpg)`}
-const ACCENTS={volt:["Volt","#D4FF3A","#0a0a0a"],orange:["Blaze","#FF5A1F","#0a0a0a"],blue:["Electric","#2F7BFF","#ffffff"],red:["Red","#FF2D3D","#ffffff"],pink:["Hyper pink","#FF4FA3","#0a0a0a"],white:["White","#F5F5F5","#0a0a0a"],workout:["Per workout","",""]};
+const ACCENTS={volt:["Volt","#D4FF3A","#0a0a0a"],orange:["Blaze","#FF5A1F","#0a0a0a"],blue:["Electric","#2F7BFF","#ffffff"],red:["Red","#FF2D3D","#ffffff"],green:["Circuit green","#39FF6A","#0a0a0a"],pink:["Hyper pink","#FF4FA3","#0a0a0a"],white:["White","#F5F5F5","#0a0a0a"],workout:["Per workout","",""]};
 function accKey(){try{return (JSON.parse(localStorage.getItem("zabCfg")||"{}").accent)||"volt"}catch(e){return"volt"}}
 function applyBrand(){const k=accKey(),rs=document.documentElement.style;if(k==="workout"){rs.setProperty("--brand","#FF5A1F");rs.setProperty("--brand-ink","#0a0a0a")}else{rs.setProperty("--brand",ACCENTS[k][1]);rs.setProperty("--brand-ink",ACCENTS[k][2])}}
-function setAccent(w){const k=accKey(),rs=document.documentElement.style;applyBrand();if(k!=="workout"){rs.setProperty("--accent","var(--brand)");rs.setProperty("--accent-ink","var(--brand-ink)");return}const [av,ai]=accOf(w);rs.setProperty("--accent",`var(${av})`);rs.setProperty("--accent-ink",ai)}
+function setAccent(w){const k=accKey(),rs=document.documentElement.style;applyBrand();if(k!=="workout"){rs.setProperty("--accent","var(--brand)");rs.setProperty("--accent-ink","var(--brand-ink)");return}const [av,ai]=accOf(w);rs.setProperty("--accent",`var(${av})`);rs.setProperty("--accent-ink",ai);rs.setProperty("--brand",`var(${av})`);rs.setProperty("--brand-ink",ai)}
 function renderDetail(w){
   setAccent(w);
   document.getElementById("htag").textContent=w.plan?w.meta[0]:GL[w.g];document.getElementById("htitle").textContent=w.name;document.getElementById("heq").textContent=w.plan?w.focus:equip(w);
