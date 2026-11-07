@@ -690,6 +690,14 @@ body.hasbg .player{background:#000!important}
 .bgpick button[aria-pressed="true"]{border-color:#fff}
 .bgpick button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 @media (prefers-reduced-transparency:reduce){.bgl{display:none}body.hasbg .plan,body.hasbg .gcard,body.hasbg .upnext,body.hasbg .dsec,body.hasbg .scard,body.hasbg .cday-detail,body.hasbg .stats,body.hasbg .lift{background:var(--cloud)!important;backdrop-filter:none}}
+
+/* v57 glass everywhere a background photo is on */
+body.hasbg .dtop{background:rgba(10,10,12,.45)!important;-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);border-bottom:1px solid rgba(255,255,255,.08)!important;box-shadow:none}
+body.hasbg .back .ic,body.hasbg .dact button,body.hasbg .pdays,body.hasbg .tab,body.hasbg .meta span,body.hasbg .sets,body.hasbg .cbtn:not(.pri),body.hasbg .newbtn:not(.pri)~.x,body.hasbg .gear{
+ background:rgba(28,28,30,.45)!important;-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);border:0!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(255,255,255,.07)!important}
+body.hasbg .dcard,body.hasbg .imp{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02) 60%),rgba(16,16,18,.42)!important;-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);border:0!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 1px rgba(255,255,255,.07),0 10px 30px rgba(0,0,0,.45)!important}
+body.hasbg .pday.on{background:#fff!important}
+body.hasbg .gear{border-radius:50%}
 </style>
 
 </head>
@@ -711,7 +719,7 @@ body.hasbg .player{background:#000!important}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 56 · Nov 6, 2026</p>
+  <p class="ver">Version 57 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
