@@ -612,6 +612,42 @@ header{margin-bottom:6px}
 .player.mini .pname{font-size:clamp(1.6rem,6.5vw,2.4rem)!important}
 .psub{margin-bottom:2px}
 .clock.reps{margin-top:2px}
+
+/* v52 de-slop: Apple patterns, Nike only in headlines */
+/* day switcher = one segmented control */
+.pdays{display:flex;gap:2px;background:var(--cloud);border-radius:12px;padding:3px;overflow-x:auto;width:max-content;max-width:100%}
+.pday{border:0!important;border-left:0!important;background:transparent!important;color:var(--mute2)!important;border-radius:9px!important;min-height:36px!important;padding:0 14px!important;font:600 .9rem var(--body);position:relative}
+.pday b{font-size:.9rem;font-weight:600}
+.pday.on{background:#fff!important;color:#000!important;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.pday.last::after{top:5px;right:5px;width:6px;height:6px;border:0;background:var(--brand)}
+.pday.on.last::after{background:#000}
+/* stats = one grouped row, hairline dividers, sentence-case labels */
+.stats{gap:0!important;background:var(--cloud);border-radius:18px;padding:14px 0}
+.stat{background:none!important;border:0!important;border-radius:0!important;padding:2px 6px!important}
+.stat+.stat{box-shadow:inset 1px 0 0 var(--line)}
+.stat b{font-size:1.25rem!important;font-weight:600!important;letter-spacing:-.01em}
+.stat small{text-transform:none!important;letter-spacing:0!important;font-size:.78rem!important;color:var(--mute2)!important;font-weight:500}
+/* small labels: sentence case, no tracking */
+.tab small,.bh h3,.pgrp,.dhead small,.dcard small,.gcard small,.ftag,.csrc,.upnext small,.pup li.gh,.psub,.ptop .where,.tag{text-transform:none!important;letter-spacing:0!important;font-family:var(--body)!important}
+.bh h3{font-size:.85rem;font-weight:600}
+.dhead small,.dcard small{font-size:.85rem}
+.gcard small{font-size:.78rem;font-weight:600;color:var(--mute2)}
+.gcard small i,.gcard small::before{display:none}
+.tag{border:0!important;background:rgba(255,255,255,.12);color:#fff!important;border-radius:999px!important;font-size:.78rem!important;font-weight:600;padding:4px 10px!important;backdrop-filter:none}
+.pup li.gh{font-size:.82rem!important;font-weight:600}
+.psub,.ptop .where{font-size:.85rem!important;font-weight:600}
+.csrc{font-size:.78rem!important}
+.ftag{font-size:.75rem!important}
+/* plan day list cards: no colored stripes */
+.dcard{border-left:0!important;border-top:0!important}
+.dsec{border-top:0!important}
+.dsec .dcard .dn,.dcard .dn{display:none}
+.dcard{grid-template-columns:minmax(0,1fr) auto!important}
+.dsec li.hd span{text-transform:none!important;letter-spacing:0!important;font-size:.82rem!important;color:var(--mute2)!important}
+.dcard small{color:var(--brand)!important;font-weight:600}
+.libhead .lcount,#pmode .libhead span,.plv .libhead span{color:var(--mute2)!important}
+#pcount{color:var(--mute2)!important;font-family:var(--body)!important;font-size:.85rem!important;white-space:nowrap}
+.dhead .dn{display:none!important}.dhead{grid-template-columns:minmax(0,1fr) auto!important}
 </style>
 
 </head>
@@ -632,7 +668,7 @@ header{margin-bottom:6px}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 51 · Nov 6, 2026</p>
+  <p class="ver">Version 52 · Nov 6, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
