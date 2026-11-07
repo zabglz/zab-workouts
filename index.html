@@ -776,6 +776,8 @@ body.hasbg .gear{border-radius:50%}
 .tbar b{display:block;height:100%;background:var(--accent);transform-origin:left;transition:transform 1s linear}
 .ringw.rest .tbar b{background:#fff}
 @media (prefers-reduced-motion:reduce){.tbar b{transition:none}}
+.tbar{width:min(300px,72vw)!important;height:8px!important;border-radius:4px!important;margin-top:10px!important;flex:none}
+.tbar b{transform-origin:right!important;border-radius:4px}
 </style>
 
 </head>
@@ -797,7 +799,7 @@ body.hasbg .gear{border-radius:50%}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 64 · Nov 6, 2026</p>
+  <p class="ver">Version 65 · Nov 7, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
