@@ -808,7 +808,7 @@ body.hasbg .gear{border-radius:50%}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 66 · Nov 9, 2026</p>
+  <p class="ver">Version 67 · Nov 9, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -2047,13 +2047,13 @@ async function keepAwake(on){awake=on;
       wakeVid=document.createElement("video");wakeVid.muted=true;wakeVid.playsInline=true;wakeVid.setAttribute("playsinline","");wakeVid.loop=true;wakeVid.style.cssText="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:0;top:0";wakeVid.srcObject=c.captureStream(1);document.body.appendChild(wakeVid)}
       await wakeVid.play()}catch(e){}}
   else{try{await wake?.release()}catch(e){}wake=null;try{wakeVid?.pause()}catch(e){}}}
-document.addEventListener("visibilitychange",()=>{if(awake&&document.visibilityState==="visible")keepAwake(true)});
-let libY=0,elapsed=0,PS=[],pi=0,left=0,running=true,tick=null,actx=null,wake=null;
+document.addEventListener("visibilitychange",()=>{if(awake&&document.visibilityState==="visible")keepAwake(true);if(document.visibilityState==="visible"&&!player.hidden&&running){let g=0;while(g++<200){const s=PS[pi];if(!s||s.reps||!running)break;if(stepEnd>Date.now())break;carry=stepEnd;pi++;show()}step()}});
+let stepEnd=0,carry=0,lastBeep=-1,libY=0,elapsed=0,PS=[],pi=0,left=0,running=true,tick=null,actx=null,wake=null;
 function beep(f=880,d=.15){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d)}catch(e){}}
 const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
 function show(){
   const s=PS[pi]; if(!s){finish();return}
-  left=s.sec||0;
+  left=s.sec||0;stepEnd=s.sec?(carry&&carry>Date.now()-s.sec*1000?carry:Date.now())+s.sec*1000:0;carry=0;
   if(s.rest){const nx=PS.slice(pi+1).find(x=>!x.rest);setFig(nx?(nx.fig||nx.n):"stand",nx?"Up next":"")}else setFig(s.fig||s.n);
   document.getElementById("pwhere").textContent=s.label;document.getElementById("pnext").dataset.sub=s.sub||"";
   const nm=document.getElementById("pname"); nm.textContent=s.n; nm.className="pname"+(s.rest?" rest":"");
@@ -2083,13 +2083,14 @@ function paint(){
   else{c.textContent=fmt(left);c.className="clock";m.textContent=running?"Pause":"Resume"}
   figPaused=!running&&!s.reps;
 }
-function go(d){pi=Math.max(0,pi+d);beep(d>0?660:440,.1);show()}
+function go(d){carry=0;lastBeep=-1;pi=Math.max(0,pi+d);beep(d>0?660:440,.1);show()}
 function paintEl(){const e=elapsed,t=e>=3600?`${Math.floor(e/3600)}:${String(Math.floor(e/60)%60).padStart(2,"0")}:${String(e%60).padStart(2,"0")}`:fmt(e);document.getElementById("pelT").textContent=t;document.getElementById("pel").classList.toggle("paused",!running)}
 function step(){
   const s=PS[pi]; if(s&&running){elapsed=realEl();paintEl()}
   if(!s||!running||s.reps) return;
-  left--; if(left<=3&&left>0){beep(660,.08);try{navigator.vibrate&&navigator.vibrate(25)}catch(e){}}
-  if(left<=0){if(s.rest){beep(880,.12);setTimeout(()=>beep(1175,.22),140)}else beep(990,.3);try{navigator.vibrate&&navigator.vibrate([40,40,40])}catch(e){}pi++;show();return}
+  left=Math.max(0,Math.ceil((stepEnd-Date.now())/1000));
+  if(left<=3&&left>0&&left!==lastBeep){lastBeep=left;beep(left===1?880:660,.12);try{navigator.vibrate&&navigator.vibrate(25)}catch(e){}}
+  if(left<=0){lastBeep=-1;carry=stepEnd;if(s.rest){beep(880,.12);setTimeout(()=>beep(1175,.22),140)}else beep(990,.3);try{navigator.vibrate&&navigator.vibrate([40,40,40])}catch(e){}pi++;show();return}
   paint();
 }
 async function start(w,from=0){
@@ -2356,7 +2357,7 @@ function close(){if(curRun){elapsed=realEl();if(elapsed>=60&&confirm(`Save this 
 document.getElementById("pmain").addEventListener("click",()=>{
   const s=PS[pi]; if(!s){close();return}
   if(s.reps){saveSet(s);beep(990,.2);doneFx();pi++;show();return}
-  running=!running;if(!running)pauseAt=Date.now();else if(pauseAt){pausedMs+=Date.now()-pauseAt;pauseAt=0}paint();paintEl();
+  running=!running;if(!running){pauseAt=Date.now()}else{stepEnd=Date.now()+left*1000}if(!running)pauseAt=pauseAt;else if(pauseAt){pausedMs+=Date.now()-pauseAt;pauseAt=0}paint();paintEl();
 });
 document.getElementById("pskip").addEventListener("click",()=>{if(PS[pi])go(1)});
 document.getElementById("pprev").addEventListener("click",()=>go(-1));
