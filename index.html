@@ -778,6 +778,15 @@ body.hasbg .gear{border-radius:50%}
 @media (prefers-reduced-motion:reduce){.tbar b{transition:none}}
 .tbar{width:min(300px,72vw)!important;height:8px!important;border-radius:4px!important;margin-top:10px!important;flex:none}
 .tbar b{transform-origin:right!important;border-radius:4px}
+
+/* v66 done steps + next line */
+.pup li.done{opacity:.45}
+.pup li.done b{color:var(--mute2)!important}
+.ck{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-style:normal;font-size:.7rem;font-weight:800;margin-right:8px;vertical-align:1px}
+.pnx{color:var(--mute2);font-size:.95rem;text-align:center;margin-top:4px}
+.pnx span{color:var(--accent);font-weight:700}
+.pnx em{font-style:normal;color:var(--ink);font-weight:600}
+.player.mini .pnx{display:none}
 </style>
 
 </head>
@@ -799,7 +808,7 @@ body.hasbg .gear{border-radius:50%}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 65 · Nov 7, 2026</p>
+  <p class="ver">Version 66 · Nov 9, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -835,6 +844,7 @@ body.hasbg .gear{border-radius:50%}
     <h2 class="pname" id="pname"></h2>
     <div class="ringw" id="ringw"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="rt" cx="60" cy="60" r="54"/><circle class="rf" id="ringf" cx="60" cy="60" r="54" pathLength="100"/></svg><div class="clock" id="pclock"></div><i class="tbar" id="tbar"><b id="tbarf"></b></i></div>
     <div class="prnx" id="prnx" hidden></div>
+    <div class="pnx" id="pnx" hidden></div>
     <div class="psum" id="psum" hidden></div>
     <div class="pw" id="pw" hidden></div>
     <div class="next" id="pnext"></div>
@@ -2054,11 +2064,12 @@ function show(){
   document.getElementById("pup").innerHTML=renderUp();{const ul=document.getElementById("pup"),cu=ul.querySelector(".cur");if(cu)ul.scrollTo({top:Math.max(0,cu.offsetTop-ul.offsetTop-(cu.previousElementSibling&&cu.previousElementSibling.classList.contains("gh")?cu.previousElementSibling.offsetHeight:0)),behavior:reduceM?"auto":"smooth"})}
   paint();renderPW(s);
   {const r=document.getElementById("prnx");const nx2=PS.slice(pi+1).find(x=>!x.rest);if(s.rest&&nx2){r.innerHTML=`<small>Up next</small><b>${esc(nx2.n)}</b><span>${nx2.reps?esc(nx2.reps):fmt(nx2.sec)}</span>`;r.hidden=false}else r.hidden=true}
+  {const q=document.getElementById("pnx"),n2=PS.slice(pi+1).find(x=>!x.rest);if(!s.rest&&n2){q.innerHTML=`<span>Next</span> ${esc(n2.n)} <em>${n2.reps?esc(n2.reps):fmt(n2.sec)}</em>`;q.hidden=false}else q.hidden=true}
   document.getElementById("psum").hidden=true;document.getElementById("ringw").hidden=false;
   {const bl=s.sub&&curRun?curRun.blocks[s.bi]:null,vm=document.getElementById("vmove");MV=bl?[...new Set(bl.i.map(x=>x[0]).filter(n=>!/^rest/i.test(n)))]:[];mvi=0;vm.hidden=MV.length<2;if(MV.length>1){vm.textContent=`Move 1/${MV.length}`;setFig(MV[0],MV[0])}}
 }
-function renderUp(){let out="",lab=null;for(let i=pi;i<PS.length;i++){const x=PS[i];{const g=(x.label||"").replace(/\s*·\s*set\s*\d+\s*\/\s*\d+\s*$/i,"");if(!x.rest&&g&&g!==lab){lab=g;out+=`<li class="gh">${esc(g)}</li>`}}
-  out+=`<li class="${x.rest?"r":""}${i===pi?" cur":""}" data-i="${i}"><b>${esc(x.n)}</b><span>${x.reps?esc(x.reps):fmt(x.sec)}</span></li>`}
+function renderUp(){let out="",lab=null;for(let i=0;i<PS.length;i++){const x=PS[i];{const g=(x.label||"").replace(/\s*·\s*set\s*\d+\s*\/\s*\d+\s*$/i,"");if(!x.rest&&g&&g!==lab){lab=g;out+=`<li class="gh">${esc(g)}</li>`}}
+  out+=`<li class="${x.rest?"r":""}${i===pi?" cur":""}${i<pi?" done":""}" data-i="${i}"><b>${i<pi&&!x.rest?'<i class="ck" aria-label="Done">✓</i>':""}${esc(x.n)}</b><span>${x.reps?esc(x.reps):fmt(x.sec)}</span></li>`}
   return out+`<li class="gh">Finish</li>`}
 document.getElementById("lswap").addEventListener("click",()=>document.getElementById("fmin").click());
 function syncTog(){const m=document.getElementById("player").classList.contains("mini"),t=document.getElementById("vtog");t.classList.toggle("list",m);t.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",String((b.dataset.t==="list")===m)))}
