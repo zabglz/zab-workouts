@@ -813,7 +813,7 @@ body.hasbg .gear{border-radius:50%}
   <div class="grid" id="grid"></div>
   </div>
   <div id="cmode" hidden><div class="cal" id="cal"></div></div>
-  <p class="ver">Version 76 · Nov 20, 2026</p>
+  <p class="ver">Version 77 · Nov 20, 2026</p>
   <div id="pmode" hidden>
   <div class="car" id="pcar" aria-label="Plans"></div>
   <div class="libhead"><h2>All plans</h2><span class="lcount" id="pcount2"></span></div>
@@ -1348,6 +1348,9 @@ declinepush:{v:80,an:'hands',k:[{tp:100,g:[-100,-100,4],a:[0,0,10]},{tp:108,g:[-
   eq:(J,F,X)=>{let x0=9,x1=-9,y=0,z0=9,z1=-9;for(const f of F)for(const S of['L','R']){const t=f['toe'+S]||f['foot'+S];if(!t)continue;x0=Math.min(x0,t[0]);x1=Math.max(x1,t[0]);z0=Math.min(z0,t[2]);z1=Math.max(z1,t[2]);y=Math.max(y,t[1])}if(y>.08)X.floorBox(x0-.2,x1+.2,y-.03,z0-.25,z1+.25)}},
 dbpushup:{v:75,an:'hands',k:[PLK,PLKD],d:[.9,.8],eq:(J,F,X)=>{for(const S of['L','R'])X.db(F[0]['hand'+S],J.fw)}},
 bearcrawl:{v:70,base:BEAR,k:[{la:[20,20,8],r:[22,-72,6]},{ra:[20,20,8],l:[22,-72,6]}],d:.5},
+boxing:{v:70,base:{g:[10,-14,8],l:[14,-16,8],r:[4,-12,8]},k:[{la:{t:[-.12,.12,.2],p:[-.3,-1,.6]},ra:{t:[.12,.14,.16],p:[.3,-1,.6]}},{la:{t:[-.12,.12,.2],p:[-.3,-1,.6]},ra:{t:[.12,.14,.16],p:[.3,-1,.6]},la:{t:[-.04,.14,.76],p:[-1,-.3,0]},tw:-10},{la:{t:[-.12,.12,.2],p:[-.3,-1,.6]},ra:{t:[.12,.14,.16],p:[.3,-1,.6]}},{la:{t:[-.12,.12,.2],p:[-.3,-1,.6]},ra:{t:[.12,.14,.16],p:[.3,-1,.6]},ra:{t:[.02,.14,.78],p:[1,-.3,0]},tw:28},{la:{t:[-.12,.12,.2],p:[-.3,-1,.6]},ra:{t:[.12,.14,.16],p:[.3,-1,.6]},se:.02}],d:[.35,.22,.25,.25,.45],
+  eq:(J,F,X)=>{const s=F[1].shL,q=F[1].handL,dx=q[0]-s[0],dz=q[2]-s[2],n=Math.hypot(dx,dz)||1,c=[q[0]-dx/n*.02,0,q[2]-dz/n*.02];X.seg([c[0],.5,c[2]],[c[0],1.52,c[2]],.36,EC.pad);X.seg([c[0],1.52,c[2]],[c[0],2.3,c[2]],.015,EC.steel)}},
+sitthru:{v:70,base:BEAR,k:[{},{tw:-80,tp:85,hp:5,la:[150,150,10],ra:[30,30,8],r:[62,70,6],l:[20,-75,6]},{},{tw:80,tp:85,hp:5,ra:[150,150,10],la:[30,30,8],l:[62,70,6],r:[20,-75,6]}],d:[.4,.6,.4,.6]},
 beartap:{v:40,base:BEAR,an:'feet',k:[{},{ra:[40,175,-35,-85]},{},{la:[40,175,-35,-85]}],d:.45},
 skater:{v:5,k:[{x:.36,tp:30,r:[60,-15,10],l:[-25,-70,-30,-12],la:[50,50,-25],ra:[-30,-30,12]},{y:.18,tp:20,g:[25,-30,8],a:[20,20,10]},sw({x:.36,tp:30,r:[60,-15,10],l:[-25,-70,-30,-12],la:[50,50,-25],ra:[-30,-30,12]}),{y:.18,tp:20,g:[25,-30,8],a:[20,20,10]}],d:.4},
 skatertap:{v:5,k:[{x:.36,tp:55,hp:-15,r:[70,-20,10],l:[-25,-70,-30,-12],la:[-20,-20,10],ra:[10,10,-12]},{y:.15,tp:20,g:[25,-30,8],a:[10,10,10]},sw({x:.36,tp:55,hp:-15,r:[70,-20,10],l:[-25,-70,-30,-12],la:[-20,-20,10],ra:[10,10,-12]}),{y:.15,tp:20,g:[25,-30,8],a:[10,10,10]}],d:.45,eq:dbsE('n')},
@@ -1437,6 +1440,7 @@ Object.assign(DF,{
  sumohp:{v:60,an:'feet',k:[{tp:50,hp:-25,g:[52,-18,32,28],a:[0,0,4]},{tp:4,g:[5,0,26,26],pf:20,a:[0,0,4]},{tp:4,g:[5,0,26,26],a:[0,0,82,-62]}],d:[.6,.45,1],eq:bbE}
 });
 const MAP=[
+[/boxing/,'boxing'],[/sit-thrus?/,'sitthru'],
 [/squat jack to hammer press/,'sjcp'],[/front rack squat/,'frontsquat'],[/floor to press/,'clean'],[/suitcase squat/,'squatdb'],[/3\/4 split squat/,'lungedb'],[/glute drive/,'hipthrust'],[/sit-thrus?/,'beartap'],[/core exercise of choice/,'situp'],
 [/^overhead press/,'military'],[/seated cable row/,'seatedrow'],[/face pull/,'rearfly'],
 [/^sprints?\b/,'run'],[/^high knees$/,'highknee'],[/leg swings/,'legswing'],[/russian twist/,'rustwist'],[/step-ups/,'stepup'],[/dumbbell forward lunge/,'lungedb'],[/incline dumbbell curl/,'inclinecurl'],[/seated high pull/,'seatedrow'],
@@ -1490,7 +1494,7 @@ stepjack:'quad calf delt',jack:'quad calf delt',crossjack:'chest delt calf',pred
 kbswing:'glute ham back',spdip:'obl abs',sprot:'obl abs delt',pyramid:'abs delt',situp:'abs',vsit:'abs',jackknife:'abs',heeltaps:'obl abs',bicycle:'abs obl',
 bicyclepress:'abs obl delt',fig4:'abs',superman:'back glute',plankSuper:'abs back glute',walkout:'ham abs delt',walkjump:'ham abs quad',kbrdl:'ham glute back',
 slrdl:'ham glute',windmill:'obl delt',halo:'delt abs',rcp:'lats bi delt',plankdrag:'abs delt lats',gobletcurl:'quad glute bi',dsl:'ham glute delt quad',
-pushuptap:'chest tri abs',planktap:'abs delt',knpush:'chest tri',pushup:'chest tri delt',navyseal:'chest tri abs',legswing:'quad glute ham',rustwist:'abs obl',stepup:'quad glute',declinepush:'chest delt tri',dbpushup:'chest tri delt',bearcrawl:'abs delt quad',beartap:'abs delt',
+pushuptap:'chest tri abs',planktap:'abs delt',knpush:'chest tri',pushup:'chest tri delt',navyseal:'chest tri abs',boxing:'delt chest abs',sitthru:'abs obl glute',legswing:'quad glute ham',rustwist:'abs obl',stepup:'quad glute',declinepush:'chest delt tri',dbpushup:'chest tri delt',bearcrawl:'abs delt quad',beartap:'abs delt',
 skater:'quad glute',skatertap:'quad glute',gorilla:'quad glute',gorillasumo:'quad glute',gorillacurl:'quad glute bi',burpee:'quad chest delt',halfburpee:'chest tri abs',
 pushcatch:'chest tri quad',pushtoe:'chest tri abs',rowstep:'lats bi',rotrowstep:'lats bi obl',bentrow:'lats bi traps',pivot:'delt obl',lungedb:'quad glute',
 lungehammer:'quad glute bi',lungecurl:'quad glute bi',lungeknee:'quad glute',lungerot:'quad glute obl',lungebw:'quad glute',sjcp:'quad glute bi delt',squatdb:'quad glute',
